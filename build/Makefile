@@ -23,3 +23,5 @@ tb: ./sim ./sim/tb_xilinx ./sim/tb_altera ./sim/tb_lattice
 ./sim:
 	mkdir -p sim
 
+clean:
+	rm -fr ./sim
