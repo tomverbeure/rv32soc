@@ -1,14 +1,14 @@
 [*]
 [*] GTKWave Analyzer v3.3.90 (w)1999-2018 BSI
-[*] Fri May 18 04:50:04 2018
+[*] Fri May 18 05:17:41 2018
 [*]
-[dumpfile] "/home/tom/projects/rv32soc/build/sim/waves.vcd"
-[dumpfile_mtime] "Fri May 18 04:49:57 2018"
-[dumpfile_size] 4371466
-[savefile] "/home/tom/projects/rv32soc/build/waves.gtkw"
+[dumpfile] "/home/tom/projects/rv32soc/sim/output/waves.vcd"
+[dumpfile_mtime] "Fri May 18 05:17:13 2018"
+[dumpfile_size] 4359765
+[savefile] "/home/tom/projects/rv32soc/sim/waves.gtkw"
 [timestart] 0
 [size] 1400 753
-[pos] -1 -1
+[pos] -201 -174
 *-23.562784 11770000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] tb.
 [treeopen] tb.u_top.
@@ -19,19 +19,9 @@
 [sst_vpaned_height] 214
 @28
 tb.clk
-@800023
-tb.gpio[7:0]
 @29
-(0)tb.gpio[7:0]
-(1)tb.gpio[7:0]
-(2)tb.gpio[7:0]
-(3)tb.gpio[7:0]
-(4)tb.gpio[7:0]
-(5)tb.gpio[7:0]
-(6)tb.gpio[7:0]
-(7)tb.gpio[7:0]
-@1001201
--group_end
+tb.led1
+tb.led2
 @28
 tb.u_top.reset_
 tb.u_top.u_soc.mem_valid

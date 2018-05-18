@@ -13,8 +13,8 @@ VERILOG_LATTICE = $(RTL)/pads_lattice.v
 
 VERILOG_TB      = $(TB)/tb.v
 
-run_xilinx: tb sw
-	cd output && ./tb_xilinx
+run_lattice: tb sw
+	cd output && ./tb_lattice
 
 sw:
 	cd ../sw && $(MAKE)
@@ -26,13 +26,13 @@ waves:
 tb: ./output ./output/tb_xilinx ./output/tb_altera ./output/tb_lattice
 
 ./output/tb_xilinx: $(VERILOG_CORE) $(VERILOG_XILINX) $(VERILOG_TB)
-	$(IVERILOG_PREFIX)/iverilog -Wall -o $@ -I ../rtl  $^
+	$(IVERILOG_PREFIX)/iverilog -Wall -o $@ -I ../rtl $^ -s tb
 
 ./output/tb_altera: $(VERILOG_CORE) $(VERILOG_ALTERA) $(VERILOG_TB)
-	$(IVERILOG_PREFIX)/iverilog -o $@ -I ../rtl  $^
+	$(IVERILOG_PREFIX)/iverilog -Wall -o $@ -I ../rtl  $^ -s tb
 
 ./output/tb_lattice: $(VERILOG_CORE) $(VERILOG_LATTICE) $(LATTICE_CELLS_SIM) $(VERILOG_TB)
-	$(IVERILOG_PREFIX)/iverilog -o $@ -I ../rtl  $^
+	$(IVERILOG_PREFIX)/iverilog -Wall -o $@ -I ../rtl  $^ -s tb
 
 ./output:
 	mkdir -p output

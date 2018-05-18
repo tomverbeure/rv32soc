@@ -4,13 +4,11 @@
 module tb();
 
     reg clk;
-    wire [7:0] gpio;
 
     initial clk = 0;
 
     always @*
         clk <= #5 !clk;
-
 
     initial begin
         $display("Start of simultion.");
@@ -22,9 +20,14 @@ module tb();
         $finish;
     end
 
+    wire led1, led2, i2c_sda, i2c_scl;
+
     top u_top(
         .clk(clk),
-        .gpio(gpio)
+        .led1(led1),
+        .led2(led2),
+        .i2c_scl(i2c_scl),
+        .i2c_sda(i2c_sda)
     );
 
 endmodule
