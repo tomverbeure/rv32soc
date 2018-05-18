@@ -1,4 +1,5 @@
 
+`timescale 1ns/100ps
 `default_nettype none
 
 module soc(
@@ -58,6 +59,23 @@ module soc(
         .mem_rdata   (mem_rdata  ),
         .irq         (irq        )
     );
+
+`ifndef SYNTHESIS
+    initial
+        $timeformat(-9,2,"ns",15);
+
+    always @(posedge clk) begin
+        if (reset_ != 1'b0) begin
+            if (mem_valid === 1'bx 
+                || (mem_valid && mem_ready ===1'bx)
+                || (mem_valid && mem_ready && (^mem_rdata === 1'bx)))
+            begin
+                $display("%t: %m has X on cpu bus. Aborting.", $time);
+                $finish;
+            end
+        end
+    end
+`endif
 
     //============================================================
     // Address decoder and data multiplexer
