@@ -185,6 +185,10 @@ module picosoc_mem #(
 );
 	reg [31:0] mem [0:WORDS-1];
 
+    initial begin
+        $readmemh("progmem.hex", mem);
+    end
+
 	always @(posedge clk) begin
         if (rd)    rdata <= mem[addr];
 		if (wr[0]) mem[addr][ 7: 0] <= wdata[ 7: 0];
@@ -192,5 +196,6 @@ module picosoc_mem #(
 		if (wr[2]) mem[addr][23:16] <= wdata[23:16];
 		if (wr[3]) mem[addr][31:24] <= wdata[31:24];
 	end
+
 endmodule
 

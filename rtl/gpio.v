@@ -24,7 +24,7 @@ module gpio
     );
 
     always @(posedge clk) begin
-        if (mem_valid && !mem_ready) begin
+        if (mem_valid && mem_sel && !mem_ready) begin
             case({mem_addr[5:2],2'd0})
                 `GPIO_CONFIG_ADDR:   gpio_oe     <= mem_wdata[NR_GPIOS-1:0];
                 `GPIO_DOUT_ADDR:     gpio_do     <= mem_wdata[NR_GPIOS-1:0];
@@ -39,7 +39,7 @@ module gpio
     always @(*) begin
         mem_rdata = 32'd0;
 
-        if (mem_valid) begin
+        if (mem_valid && mem_sel) begin
             case({mem_addr[5:2],2'd0})
                 `GPIO_CONFIG_ADDR: mem_rdata = gpio_oe;
                 `GPIO_DOUT_ADDR:   mem_rdata = gpio_do;
