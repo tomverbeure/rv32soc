@@ -13,28 +13,28 @@ VERILOG_LATTICE = $(RTL)/pads_lattice.v
 VERILOG_TB      = $(TB)/tb.v
 
 run_xilinx: tb sw
-	cd sim && ./tb_xilinx
+	cd output && ./tb_xilinx
 
 sw:
 	cd ../sw && $(MAKE)
-	cp ../sw/progmem.hex sim
+	cp ../sw/progmem.hex output
 
 waves:
-	gtkwave ./sim/waves.vcd
+	gtkwave ./output/waves.vcd
 
-tb: ./sim ./sim/tb_xilinx ./sim/tb_altera ./sim/tb_lattice
+tb: ./output ./output/tb_xilinx ./output/tb_altera ./output/tb_lattice
 
-./sim/tb_xilinx: $(VERILOG_CORE) $(VERILOG_XILINX) $(VERILOG_TB)
+./output/tb_xilinx: $(VERILOG_CORE) $(VERILOG_XILINX) $(VERILOG_TB)
 	$(IVERILOG_PREFIX)/iverilog -o $@ -I ../rtl  $^
 
-./sim/tb_altera: $(VERILOG_CORE) $(VERILOG_ALTERA) $(VERILOG_TB)
+./output/tb_altera: $(VERILOG_CORE) $(VERILOG_ALTERA) $(VERILOG_TB)
 	$(IVERILOG_PREFIX)/iverilog -o $@ -I ../rtl  $^
 
-./sim/tb_lattice: $(VERILOG_CORE) $(VERILOG_LATTICE) $(LATTICE_CELLS_SIM) $(VERILOG_TB)
+./output/tb_lattice: $(VERILOG_CORE) $(VERILOG_LATTICE) $(LATTICE_CELLS_SIM) $(VERILOG_TB)
 	$(IVERILOG_PREFIX)/iverilog -o $@ -I ../rtl  $^
 
-./sim:
-	mkdir -p sim
+./output:
+	mkdir -p output
 
 clean:
-	rm -fr ./sim
+	rm -fr ./output
