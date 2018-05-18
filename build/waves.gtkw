@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.90 (w)1999-2018 BSI
-[*] Fri May 18 03:03:17 2018
+[*] Fri May 18 04:50:04 2018
 [*]
 [dumpfile] "/home/tom/projects/rv32soc/build/sim/waves.vcd"
-[dumpfile_mtime] "Fri May 18 03:01:49 2018"
-[dumpfile_size] 169169
+[dumpfile_mtime] "Fri May 18 04:49:57 2018"
+[dumpfile_size] 4371466
 [savefile] "/home/tom/projects/rv32soc/build/waves.gtkw"
 [timestart] 0
 [size] 1400 753
 [pos] -1 -1
-*-17.240208 105200 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-23.562784 11770000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] tb.
 [treeopen] tb.u_top.
 [treeopen] tb.u_top.u_soc.
@@ -19,18 +19,52 @@
 [sst_vpaned_height] 214
 @28
 tb.clk
-@22
+@800023
 tb.gpio[7:0]
+@29
+(0)tb.gpio[7:0]
+(1)tb.gpio[7:0]
+(2)tb.gpio[7:0]
+(3)tb.gpio[7:0]
+(4)tb.gpio[7:0]
+(5)tb.gpio[7:0]
+(6)tb.gpio[7:0]
+(7)tb.gpio[7:0]
+@1001201
+-group_end
 @28
 tb.u_top.reset_
 tb.u_top.u_soc.mem_valid
-@29
 tb.u_top.u_soc.mem_ready
-@28
 tb.u_top.u_soc.mem_instr
+tb.u_top.u_soc.u_gpio.mem_wr
 @22
 tb.u_top.u_soc.mem_addr[31:0]
 tb.u_top.u_soc.mem_wdata[31:0]
 tb.u_top.u_soc.mem_rdata[31:0]
+@28
+tb.u_top.u_soc.cpu.trap
+tb.u_top.u_soc.u_gpio.mem_sel
+tb.u_top.u_soc.mem_sel_gpio
+@22
+tb.u_top.u_soc.u_gpio.gpio_di[7:0]
+tb.u_top.u_soc.u_gpio.gpio_do[7:0]
+tb.u_top.u_soc.u_gpio.gpio_oe[7:0]
+@28
+tb.u_top.u_soc.u_gpio.reset_
+@22
+tb.u_top.u_soc.u_gpio.gpio_di[7:0]
+tb.u_top.u_soc.u_gpio.gpio_do[7:0]
+tb.u_top.u_soc.u_gpio.gpio_oe[7:0]
+tb.u_top.u_soc.u_gpio.mem_addr[11:0]
+tb.u_top.u_soc.u_gpio.mem_rdata[31:0]
+@28
+tb.u_top.u_soc.u_gpio.mem_ready
+tb.u_top.u_soc.u_gpio.mem_sel
+tb.u_top.u_soc.u_gpio.mem_valid
+@22
+tb.u_top.u_soc.u_gpio.mem_wdata[31:0]
+@28
+tb.u_top.u_soc.u_gpio.mem_wr
 [pattern_trace] 1
 [pattern_trace] 0
