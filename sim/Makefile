@@ -7,9 +7,9 @@ RTL = ../rtl
 TB = ../tb
 
 VERILOG_CORE    = $(RTL)/top.v $(RTL)/soc.v $(RTL)/picorv32.v $(RTL)/gpio.v $(RTL)/reset_gen.v
-VERILOG_XILINX  = $(RTL)/pads_generic.v
-VERILOG_ALTERA  = $(RTL)/pads_generic.v
-VERILOG_LATTICE = $(RTL)/pads_lattice.v
+VERILOG_XILINX  = $(RTL)/pads_generic.v $(RTL)/pll_generic.v
+VERILOG_ALTERA  = $(RTL)/pads_generic.v $(RTL)/pll_generic.v
+VERILOG_LATTICE = $(RTL)/pads_lattice.v $(RTL)/pll_generic.v
 
 VERILOG_TB      = $(TB)/tb.v
 
