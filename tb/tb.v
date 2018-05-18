@@ -23,7 +23,7 @@ module tb();
     wire led1, led2, i2c_sda, i2c_scl;
 
     top u_top(
-        .clk(clk),
+        .osc_clk(clk),
         .led1(led1),
         .led2(led2),
         .i2c_scl(i2c_scl),
