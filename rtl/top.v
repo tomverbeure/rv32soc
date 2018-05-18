@@ -32,10 +32,17 @@ module top(
 
     // pad_inout u_gpio[7:0] (.pad(gpio), .pad_ena(gpio_oe), .to_pad(gpio_do), .from_pad(gpio_di));
 
+    assign gpio_di[1:0] = 0;
+    assign gpio_di[4:7] = 0;
+
     pad_out u_led1 (.pad(led1), .to_pad(gpio_do[0]) );
     pad_out u_led2 (.pad(led2), .to_pad(gpio_do[1]) );
 
-    pad_inout u_i2c_scl (.pad(i2c_scl), .pad_ena(gpio_oe[2] && !gpio_do[2]), .to_pad(gpio_do[2]), .from_pad(gpio_di[2]));
-    pad_inout u_i2c_sda (.pad(i2c_sda), .pad_ena(gpio_oe[3] && !gpio_do[3]), .to_pad(gpio_do[3]), .from_pad(gpio_di[3]));
+    wire i2c_scl_oe, i2c_sda_oe;
+    assign i2c_scl_oe = gpio_oe[2] && !gpio_do[2];
+    assign i2c_sda_oe = gpio_oe[3] && !gpio_do[3];
+
+    pad_inout u_i2c_scl (.pad(i2c_scl), .pad_ena(i2c_scl_oe), .to_pad(1'b0), .from_pad(gpio_di[2]));
+    pad_inout u_i2c_sda (.pad(i2c_sda), .pad_ena(i2c_sda_oe), .to_pad(1'b0), .from_pad(gpio_di[3]));
 
 endmodule

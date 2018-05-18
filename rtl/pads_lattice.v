@@ -6,9 +6,6 @@ module pad_inout(
     output  from_pad
     );
 
-    assign pad = pad_ena ? to_pad : 1'bz;
-    assign from_pad = pad;
-
 	SB_IO #(
 		.PIN_TYPE(6'b 1010_01),
 		.PULLUP(1'b 0)
