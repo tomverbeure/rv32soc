@@ -17,7 +17,7 @@ module tb();
 		$dumpfile("waves.vcd");
 		$dumpvars(0);
 	
-        repeat (1000) @(posedge clk);
+        repeat (10000) @(posedge clk);
         $display("Simulation finished.");
         $finish;
     end

@@ -12,8 +12,12 @@ VERILOG_LATTICE = $(RTL)/pads_lattice.v
 
 VERILOG_TB      = $(TB)/tb.v
 
-run_xilinx: tb
+run_xilinx: tb sw
 	cd sim && ./tb_xilinx
+
+sw:
+	cd ../sw && $(MAKE)
+	cp ../sw/progmem.hex sim
 
 waves:
 	gtkwave ./sim/waves.vcd
