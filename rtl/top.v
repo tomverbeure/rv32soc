@@ -10,12 +10,8 @@ module top(
     );
 
     wire reset_;
-    reg [2:0] reset_vec_;
-    initial reset_vec_ = 0;
-    always @(posedge clk) begin
-        reset_vec_  <= { reset_vec_[1:0], 1'b1 };
-    end
-    assign reset_ = reset_vec_[2];
+
+    reset_gen u_reset_gen( .clk(clk), .reset_(reset_) );
 
     wire [7:0] gpio_oe;
     wire [7:0] gpio_do;
