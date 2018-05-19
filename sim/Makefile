@@ -1,7 +1,8 @@
 
 LATTICE_CELLS_SIM := $(shell yosys-config --datdir/ice40/cells_sim.v)
 
-IVERILOG_PREFIX  = /opt/iverilog/bin/
+IVERILOG_PREFIX = /opt/iverilog/bin/
+IVERILOG	= $(IVERILOG_PREFIX)/iverilog
 
 RTL = ../rtl
 TB = ../tb
@@ -26,13 +27,13 @@ waves:
 tb: ./output ./output/tb_xilinx ./output/tb_altera ./output/tb_lattice
 
 ./output/tb_xilinx: $(VERILOG_CORE) $(VERILOG_XILINX) $(VERILOG_TB)
-	$(IVERILOG_PREFIX)/iverilog -Wall -o $@ -I ../rtl $^ -s tb
+	$(IVERILOG) -Wall -o $@ -I ../rtl $^ -s tb
 
 ./output/tb_altera: $(VERILOG_CORE) $(VERILOG_ALTERA) $(VERILOG_TB)
-	$(IVERILOG_PREFIX)/iverilog -Wall -o $@ -I ../rtl  $^ -s tb
+	$(IVERILOG) -Wall -o $@ -I ../rtl  $^ -s tb
 
 ./output/tb_lattice: $(VERILOG_CORE) $(VERILOG_LATTICE) $(LATTICE_CELLS_SIM) $(VERILOG_TB)
-	$(IVERILOG_PREFIX)/iverilog -Wall -o $@ -I ../rtl  $^ -s tb
+	$(IVERILOG) -Wall -o $@ -I ../rtl  $^ -s tb
 
 ./output:
 	mkdir -p output
