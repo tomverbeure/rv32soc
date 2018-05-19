@@ -9,6 +9,7 @@ synth: progmem.mif
 
 update_ram: progmem.mif
 	cp progmem.mif `find db -name "*picosoc_mem*.mif"`
+	$(QUARTUS_ROOTDIR)/bin/quartus_cdb $(PROJECT_NAME) -c $(PROJECT_NAME) --update_mif
 	$(QUARTUS_ROOTDIR)/bin/quartus_asm --read_settings_files=off --write_settings_files=off $(PROJECT_NAME) -c $(PROJECT_NAME)
 
 .PHONY: progmem.mif

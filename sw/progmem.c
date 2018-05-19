@@ -27,7 +27,7 @@ int main() {
         start = rdcycle();
         while ((rdcycle() - start) <= 20000000);
 
-        GPIO_DOUT = 0x00;
+        GPIO_DOUT = 0xaa;
 
         start = rdcycle();
         while ((rdcycle() - start) <= 20000000);
