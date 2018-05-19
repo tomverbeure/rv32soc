@@ -18,21 +18,18 @@ int main() {
 
     GPIO_CONFIG = 0xff;
 
-//    UART_BAUD = FREQ / BAUD_RATE;
-//    LEDS = 0xAA;
-
     uint32_t start;
 
     for (;;) {
-        GPIO_DOUT_SET = 0xf0;
-        GPIO_DOUT_CLR = 0x0f;
+        GPIO_DOUT_SET = 0x55;
+        GPIO_DOUT_CLR = 0xaa;
 
         start = rdcycle();
-        while ((rdcycle() - start) <= 100);
+        while ((rdcycle() - start) <= 20000000);
 
-        GPIO_DOUT = 0x0f;
+        GPIO_DOUT = 0xaa;
 
         start = rdcycle();
-        while ((rdcycle() - start) <= 100);
+        while ((rdcycle() - start) <= 20000000);
     }
 }
