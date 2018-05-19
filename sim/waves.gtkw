@@ -1,22 +1,21 @@
 [*]
-[*] GTKWave Analyzer v3.3.90 (w)1999-2018 BSI
-[*] Fri May 18 23:03:58 2018
+[*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
+[*] Sat May 19 19:09:22 2018
 [*]
-[dumpfile] "/home/tom/projects/rv32soc/sim/output/waves.vcd"
-[dumpfile_mtime] "Fri May 18 23:03:29 2018"
-[dumpfile_size] 5030414
-[savefile] "/home/tom/projects/rv32soc/sim/waves.gtkw"
-[timestart] 19655900
-[size] 1400 753
-[pos] -1 -1
-*-14.562784 19705000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[dumpfile] "(null)"
+[savefile] "/home/ubuntu/projects/rv32soc/sim/waves.gtkw"
+[timestart] 0
+[size] 1612 1017
+[pos] 155 27
+*-14.562784 30000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] tb.
 [treeopen] tb.u_top.
 [treeopen] tb.u_top.u_soc.
+[treeopen] tb.u_top.u_soc.cpu.
 [sst_width] 225
 [signals_width] 330
 [sst_expanded] 1
-[sst_vpaned_height] 214
+[sst_vpaned_height] 554
 @28
 tb.clk
 tb.led1
@@ -32,7 +31,6 @@ tb.u_top.u_soc.mem_addr[31:0]
 tb.u_top.u_soc.mem_wdata[31:0]
 tb.u_top.u_soc.mem_rdata[31:0]
 @28
-tb.u_top.u_soc.cpu.trap
 tb.u_top.u_soc.u_gpio.mem_sel
 tb.u_top.u_soc.mem_sel_gpio
 @22
@@ -55,5 +53,40 @@ tb.u_top.u_soc.u_gpio.mem_valid
 tb.u_top.u_soc.u_gpio.mem_wdata[31:0]
 @28
 tb.u_top.u_soc.u_gpio.mem_wr
+@22
+tb.u_top.u_soc.cpu.data_address[31:0]
+@28
+tb.u_top.u_soc.cpu.data_read
+@22
+tb.u_top.u_soc.cpu.data_read_value[31:0]
+@28
+tb.u_top.u_soc.cpu.data_ready
+tb.u_top.u_soc.cpu.data_write
+@22
+tb.u_top.u_soc.cpu.data_write_mask[3:0]
+tb.u_top.u_soc.cpu.data_write_value[31:0]
+tb.u_top.u_soc.cpu.instr_address[31:0]
+@28
+tb.u_top.u_soc.cpu.instr_read
+@22
+tb.u_top.u_soc.cpu.instr_read_value[31:0]
+@28
+tb.u_top.u_soc.cpu.instr_ready
+@200
+-
+@28
+tb.u_top.u_soc.cpu.mem_valid
+tb.u_top.u_soc.cpu.mem_ready
+tb.u_top.u_soc.cpu.mem_instr
+@22
+tb.u_top.u_soc.cpu.mem_addr[31:0]
+tb.u_top.u_soc.cpu.mem_wstrb[3:0]
+tb.u_top.u_soc.cpu.mem_wdata[31:0]
+tb.u_top.u_soc.cpu.mem_rdata[31:0]
+@201
+-
+@28
+tb.u_top.u_soc.local_ram_rd
+tb.u_top.u_soc.mem_sel_local_ram
 [pattern_trace] 1
 [pattern_trace] 0

@@ -36,18 +36,20 @@ module soc(
     wire [31:0] irq;
     assign irq = 32'd0;
 
-    picorv32 #(
-        .STACKADDR(STACKADDR),
-        .PROGADDR_RESET(PROGADDR_RESET),
-        .PROGADDR_IRQ(PROGADDR_IRQ),
-        .BARREL_SHIFTER(BARREL_SHIFTER),
-        .COMPRESSED_ISA(COMPRESSED_ISA),
-        .ENABLE_MUL(ENABLE_MUL),
-        .ENABLE_FAST_MUL(ENABLE_FAST_MUL),
-        .ENABLE_DIV(ENABLE_DIV),
-        .ENABLE_IRQ(1),
-        .ENABLE_IRQ_QREGS(0)
-    ) cpu (
+//    picorv32 #(
+//        .STACKADDR(STACKADDR),
+//        .PROGADDR_RESET(PROGADDR_RESET),
+//        .PROGADDR_IRQ(PROGADDR_IRQ),
+//        .BARREL_SHIFTER(BARREL_SHIFTER),
+//        .COMPRESSED_ISA(COMPRESSED_ISA),
+//        .ENABLE_MUL(ENABLE_MUL),
+//        .ENABLE_FAST_MUL(ENABLE_FAST_MUL),
+//        .ENABLE_DIV(ENABLE_DIV),
+//        .ENABLE_IRQ(1),
+//        .ENABLE_IRQ_QREGS(0)
+//    ) 
+    icicle_wrapper
+    cpu (
         .clk         (clk        ),
         .resetn      (reset_     ),
         .mem_valid   (mem_valid  ),
@@ -99,6 +101,10 @@ module soc(
     reg mem_ready_void;
     always @(posedge clk) begin
         mem_ready_void  <= mem_valid & !mem_ready_void;
+
+        if (!reset_) begin
+            mem_ready_void  <= 1'b0;
+        end
     end
 
     //============================================================
@@ -110,6 +116,10 @@ module soc(
 
     always @(posedge clk) begin
         mem_ready_local_ram <= mem_valid & mem_sel_local_ram & !mem_ready_local_ram;
+
+        if (!reset_) begin
+            mem_ready_local_ram  <= 1'b0;
+        end
     end
 
     wire [3:0] local_ram_wr; 
