@@ -5,6 +5,11 @@
 start:
     la t0, bss_start
     la t1, bss_end
+    j start
+    lui zero, 0
+    lui zero, 0
+    lui zero, 0
+    lui zero, 0
 
     beq t0, t1, clear_bss_done
 clear_bss:

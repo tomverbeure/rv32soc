@@ -1,13 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
-[*] Sat May 19 19:09:22 2018
+[*] Tue May 22 06:32:52 2018
 [*]
-[dumpfile] "(null)"
+[dumpfile] "/home/ubuntu/projects/rv32soc/sim/output/waves.vcd"
+[dumpfile_mtime] "Tue May 22 06:32:24 2018"
+[dumpfile_size] 1563062
 [savefile] "/home/ubuntu/projects/rv32soc/sim/waves.gtkw"
-[timestart] 0
+[timestart] 52900
 [size] 1612 1017
 [pos] 155 27
-*-14.562784 30000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-15.562784 165000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] tb.
 [treeopen] tb.u_top.
 [treeopen] tb.u_top.u_soc.
@@ -21,6 +23,9 @@ tb.clk
 tb.led1
 tb.led2
 tb.u_top.led3
+@200
+-
+@28
 tb.u_top.reset_
 tb.u_top.u_soc.mem_valid
 tb.u_top.u_soc.mem_ready
@@ -30,48 +35,27 @@ tb.u_top.u_soc.u_gpio.mem_wr
 tb.u_top.u_soc.mem_addr[31:0]
 tb.u_top.u_soc.mem_wdata[31:0]
 tb.u_top.u_soc.mem_rdata[31:0]
+@200
+-
 @28
-tb.u_top.u_soc.u_gpio.mem_sel
-tb.u_top.u_soc.mem_sel_gpio
-@22
-tb.u_top.u_soc.u_gpio.gpio_di[7:0]
-tb.u_top.u_soc.u_gpio.gpio_do[7:0]
-tb.u_top.u_soc.u_gpio.gpio_oe[7:0]
-@28
-tb.u_top.u_soc.u_gpio.reset_
-@22
-tb.u_top.u_soc.u_gpio.gpio_di[7:0]
-tb.u_top.u_soc.u_gpio.gpio_do[7:0]
-tb.u_top.u_soc.u_gpio.gpio_oe[7:0]
-tb.u_top.u_soc.u_gpio.mem_addr[11:0]
-tb.u_top.u_soc.u_gpio.mem_rdata[31:0]
-@28
-tb.u_top.u_soc.u_gpio.mem_ready
-tb.u_top.u_soc.u_gpio.mem_sel
-tb.u_top.u_soc.u_gpio.mem_valid
-@22
-tb.u_top.u_soc.u_gpio.mem_wdata[31:0]
-@28
-tb.u_top.u_soc.u_gpio.mem_wr
-@22
-tb.u_top.u_soc.cpu.data_address[31:0]
-@28
+tb.u_top.u_soc.cpu.data_write
+@29
 tb.u_top.u_soc.cpu.data_read
-@22
-tb.u_top.u_soc.cpu.data_read_value[31:0]
 @28
 tb.u_top.u_soc.cpu.data_ready
-tb.u_top.u_soc.cpu.data_write
 @22
 tb.u_top.u_soc.cpu.data_write_mask[3:0]
+tb.u_top.u_soc.cpu.data_address[31:0]
 tb.u_top.u_soc.cpu.data_write_value[31:0]
-tb.u_top.u_soc.cpu.instr_address[31:0]
+tb.u_top.u_soc.cpu.data_read_value[31:0]
+@200
+-
 @28
 tb.u_top.u_soc.cpu.instr_read
-@22
-tb.u_top.u_soc.cpu.instr_read_value[31:0]
-@28
 tb.u_top.u_soc.cpu.instr_ready
+@22
+tb.u_top.u_soc.cpu.instr_address[31:0]
+tb.u_top.u_soc.cpu.instr_read_value[31:0]
 @200
 -
 @28
@@ -83,7 +67,7 @@ tb.u_top.u_soc.cpu.mem_addr[31:0]
 tb.u_top.u_soc.cpu.mem_wstrb[3:0]
 tb.u_top.u_soc.cpu.mem_wdata[31:0]
 tb.u_top.u_soc.cpu.mem_rdata[31:0]
-@201
+@200
 -
 @28
 tb.u_top.u_soc.local_ram_rd

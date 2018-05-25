@@ -52,8 +52,62 @@ module icicle_wrapper(
         .cycle_out(cycle)
     );
 
+    reg instr_selected, data_selected;
+    reg instr_selected_nxt, data_selected_nxt;
+    reg select_instr, select_data;
+
+    always @(*) begin
+        select_data  = 1'b0;
+        select_instr = 1'b0;
+
+        instr_selected_nxt = instr_selected;
+        data_selected_nxt  = data_selected;
+
+        if (!instr_selected && !data_selected) begin
+    
+            if (data_read | data_write) begin
+                select_data = 1'b1;
+
+                if (!data_ready) begin
+                    data_selected_nxt = 1'b1;
+                end
+            end
+            else if (instr_read) begin
+                select_instr = 1'b1;
+
+                if (!instr_ready) begin
+                    instr_selected_nxt = 1'b1;
+                end
+            end
+        end
+        else if (data_selected) begin
+            select_data = 1'b1;
+
+            if (data_ready) begin
+                data_selected_nxt = 1'b0;
+            end
+        end
+        else if (instr_selected) begin
+            select_instr = 1'b1;
+
+            if (instr_ready) begin
+                instr_selected_nxt = 1'b0;
+            end
+        end
+    end
+
+    always @(posedge clk) begin
+        instr_selected <= instr_selected_nxt;
+        data_selected  <= data_selected_nxt;
+
+        if (!resetn) begin
+            instr_selected <= 1'b0;
+            data_selected  <= 1'b0;
+        end
+    end
+
     always @* begin
-        if (data_read | data_write) begin
+        if (select_data) begin
             mem_valid       = 1'b1;
             mem_instr       = 1'b0;
 
