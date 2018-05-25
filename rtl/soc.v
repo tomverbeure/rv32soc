@@ -36,19 +36,26 @@ module soc(
     wire [31:0] irq;
     assign irq = 32'd0;
 
-//    picorv32 #(
-//        .STACKADDR(STACKADDR),
-//        .PROGADDR_RESET(PROGADDR_RESET),
-//        .PROGADDR_IRQ(PROGADDR_IRQ),
-//        .BARREL_SHIFTER(BARREL_SHIFTER),
-//        .COMPRESSED_ISA(COMPRESSED_ISA),
-//        .ENABLE_MUL(ENABLE_MUL),
-//        .ENABLE_FAST_MUL(ENABLE_FAST_MUL),
-//        .ENABLE_DIV(ENABLE_DIV),
-//        .ENABLE_IRQ(1),
-//        .ENABLE_IRQ_QREGS(0)
-//    ) 
+`ifdef USE_PICORV32
+    picorv32 #(
+        .STACKADDR(STACKADDR),
+        .PROGADDR_RESET(PROGADDR_RESET),
+        .PROGADDR_IRQ(PROGADDR_IRQ),
+        .BARREL_SHIFTER(BARREL_SHIFTER),
+        .COMPRESSED_ISA(COMPRESSED_ISA),
+        .ENABLE_MUL(ENABLE_MUL),
+        .ENABLE_FAST_MUL(ENABLE_FAST_MUL),
+        .ENABLE_DIV(ENABLE_DIV),
+        .ENABLE_IRQ(1),
+        .ENABLE_IRQ_QREGS(0)
+    ) 
+`endif
+`ifdef USE_ICICLE
     icicle_wrapper
+`endif
+`ifdef USE_VEXRISCV
+    vexriscv_wrapper
+`endif
     cpu (
         .clk         (clk        ),
         .resetn      (reset_     ),
@@ -110,10 +117,31 @@ module soc(
     //============================================================
     // LOCAL RAM
     //============================================================
+  
 
+`ifdef USE_VEXRISCV
     reg mem_ready_local_ram;
-    wire [31:0] mem_rdata_local_ram;
+    reg [31:0] mem_rdata_local_ram;
 
+    reg mem_ready_local_ram_p1;
+
+    always @(posedge clk) begin
+        mem_ready_local_ram_p1 <= mem_valid & mem_sel_local_ram;
+        mem_ready_local_ram    <= mem_ready_local_ram_p1;
+
+        mem_rdata_local_ram    <= local_ram_rdata;
+
+        if (!reset_) begin
+            mem_ready_local_ram     <= 1'b0;
+            mem_ready_local_ram_p1  <= 1'b0;
+        end
+    end
+
+    wire [3:0] local_ram_wr; 
+    wire local_ram_rd;
+    assign local_ram_wr = (mem_valid && mem_sel_local_ram) ? mem_wstrb : 4'b0;
+    assign local_ram_rd = (mem_valid && mem_sel_local_ram && !(|mem_wstrb));
+`else
     always @(posedge clk) begin
         mem_ready_local_ram <= mem_valid & mem_sel_local_ram & !mem_ready_local_ram;
 
@@ -127,7 +155,11 @@ module soc(
     assign local_ram_wr = (mem_valid && mem_sel_local_ram & !mem_ready_local_ram) ? mem_wstrb : 4'b0;
     assign local_ram_rd = (mem_valid && mem_sel_local_ram & !mem_ready_local_ram & !(|mem_wstrb));
 
+    assign mem_rdata_local_ram = local_ram_rdata;
+`endif
+
     localparam local_ram_addr_bits = $clog2(LOCAL_RAM_SIZE_KB * 1024);
+    wire [31:0] local_ram_rdata;
 
 	picosoc_mem #(.WORDS(LOCAL_RAM_SIZE_KB * 256)) memory (
 		.clk(clk),
@@ -135,7 +167,7 @@ module soc(
 		.rd(local_ram_rd),
 		.addr(mem_addr[local_ram_addr_bits-1:2]),
 		.wdata(mem_wdata),
-		.rdata(mem_rdata_local_ram)
+		.rdata(local_ram_rdata)
 	);
 
     //============================================================

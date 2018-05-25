@@ -21,15 +21,17 @@ int main() {
     uint32_t start;
 
     for (;;) {
-        GPIO_DOUT_SET = 0x55;
-        GPIO_DOUT_CLR = 0xaa;
+//        GPIO_DOUT_SET = 0x55;
+//        GPIO_DOUT_CLR = 0xaa;
 
-        start = rdcycle();
-        while ((rdcycle() - start) <= 20000000);
+        GPIO_DOUT = 0x55;
 
-        GPIO_DOUT = 0x00;
+//        start = rdcycle();
+//        while ((rdcycle() - start) <= 20000000);
 
-        start = rdcycle();
-        while ((rdcycle() - start) <= 20000000);
+        GPIO_DOUT = 0xaa;
+
+//        start = rdcycle();
+//        while ((rdcycle() - start) <= 20000000);
     }
 }

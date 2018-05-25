@@ -4,13 +4,18 @@ LATTICE_CELLS_SIM := $(shell yosys-config --datdir/ice40/cells_sim.v)
 IVERILOG_PREFIX = /opt/iverilog/bin/
 #IVERILOG	= $(IVERILOG_PREFIX)/iverilog
 IVERILOG	= iverilog
+CPU         = USE_VEXRISCV
 
 RTL = ../rtl
 TB = ../tb
 ICICLE_RTL =  ../../icicle
 
 
-VERILOG_CORE    = $(RTL)/top.v $(RTL)/soc.v $(RTL)/gpio.v $(RTL)/reset_gen.v $(RTL)/picorv32.v $(RTL)/icicle_wrapper.v
+VERILOG_CORE    = $(RTL)/top.v $(RTL)/soc.v $(RTL)/gpio.v $(RTL)/reset_gen.v \
+			$(RTL)/picorv32.v \
+			$(RTL)/icicle_wrapper.v \
+			$(RTL)/vexriscv_wrapper.v ../vexriscv/VexRiscv_FullNoMmuNoCacheNoCsrNoDbg.v
+
 VERILOG_XILINX  = $(RTL)/pads_generic.v $(RTL)/pll_generic.v
 VERILOG_ALTERA  = $(RTL)/pads_generic.v $(RTL)/pll_generic.v
 VERILOG_LATTICE = $(RTL)/pads_lattice.v $(RTL)/pll_generic.v
@@ -45,7 +50,7 @@ waves:
 tb: ./output ./output/tb_xilinx # ./output/tb_altera ./output/tb_lattice
 
 ./output/tb_xilinx: $(VERILOG_ICICLE) $(VERILOG_CORE) $(VERILOG_XILINX) $(VERILOG_TB)
-	$(IVERILOG)  -o $@ -g2012 -I ../rtl -I $(ICICLE_RTL) $^ -s tb
+	$(IVERILOG)  -o $@ -g2012 -D $(CPU)  -I ../rtl -I $(ICICLE_RTL) $^ -s tb
 
 ./output/tb_altera: $(VERILOG_ICICLE) $(VERILOG_CORE) $(VERILOG_ALTERA) $(VERILOG_TB)
 	$(IVERILOG) -Wall -o $@ -I ../rtl  $ -I $(ICICLE_RTL)^ -s tb
