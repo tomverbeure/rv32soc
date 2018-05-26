@@ -3,14 +3,16 @@ module vexriscv_wrapper(
     input             clk,
     input             resetn,
 
-    output reg        mem_valid,
-    output reg        mem_instr,
-    input             mem_ready,
+    output reg        mem_cmd_valid,
+    input             mem_cmd_ready,
+    output reg        mem_cmd_instr,
+    output reg        mem_cmd_wr,
+    output reg [31:0] mem_cmd_addr,
+    output reg [31:0] mem_cmd_wdata,
+    output reg [ 3:0] mem_cmd_be,
 
-    output reg [31:0] mem_addr,
-    output reg [31:0] mem_wdata,
-    output reg [ 3:0] mem_wstrb,
-    input      [31:0] mem_rdata, 
+    input             mem_rsp_ready,
+    input      [31:0] mem_rsp_rdata, 
 
     input      [31:0] irq
     );
@@ -55,24 +57,27 @@ module vexriscv_wrapper(
         .dBus_rsp_data(dBus_rsp_data)
     );
 
-    reg dBus_cmd_ready_p1;
-    reg iBus_cmd_ready_p1;
+    reg mem_rsp_pending;
+    reg mem_rsp_pending_instr;
 
     always @(posedge clk) begin
-        dBus_cmd_ready_p1  <= dBus_cmd_ready & !dBus_cmd_payload_wr;
-        dBus_rsp_ready     <= dBus_cmd_ready_p1;
+        if (mem_cmd_valid && !mem_cmd_wr) begin
+            mem_rsp_pending         <= 1'b1;
+            mem_rsp_pending_instr   <= mem_cmd_instr;
+        end
 
-        iBus_cmd_ready_p1  <= iBus_cmd_ready;
-        iBus_rsp_ready     <= iBus_cmd_ready_p1;
+        if (mem_rsp_ready) begin
+            mem_rsp_pending         <= 1'b0;
+        end
 
-        if (!resetn) begin
-            dBus_cmd_ready_p1  <= 1'b0;
-            dBus_rsp_ready     <= 1'b0;
-
-            iBus_cmd_ready_p1  <= 1'b0;
-            iBus_rsp_ready     <= 1'b0;
+        if (!reset_) begin
+            mem_rsp_pending         <= 1'b0;
+            mem_rsp_pending_instr   <= 1'b0;
         end
     end
+
+    assign iBus_rsp_ready   = mem_rsp_ready &&  mem_rsp_pending_instr;
+    assign iDus_rsp_ready   = mem_rsp_ready && !mem_rsp_pending_instr;
 
     assign iBus_rsp_inst    = mem_rdata;
     assign dBus_rsp_data    = mem_rdata;
@@ -85,28 +90,29 @@ module vexriscv_wrapper(
         iBus_cmd_ready  = 1'b0;
 
         if (dBus_cmd_valid) begin
-            mem_valid       = 1'b1;
-            mem_instr       = 1'b0;
+            mem_cmd_valid   = dBus_cmd_valid && !mem_rsp_pending;
+            mem_cmd_instr   = 1'b0;
+            mem_cmd_wr      = dBus_cmd_payload_wr;
 
-            mem_addr        = { dBus_cmd_payload_address[31:2], 2'b00 };
-            mem_wstrb       = !dBus_cmd_payload_wr          ? 4'd0  :
-                              dBus_cmd_payload_size == 2'd0 ? (4'b0001 << dBus_cmd_payload_address[1:0]) :
-                              dBus_cmd_payload_size == 2'd1 ? (4'b0011 << (dBus_cmd_payload_address[1]<<1)) :
+            mem_cmd_addr    = dBus_cmd_payload_address;
+            mem_cmd_be      = dBus_cmd_payload_size == 2'd0 ? (4'b0001 << dBus_cmd_payload_address[1:0]) :
+                              dBus_cmd_payload_size == 2'd1 ? (4'b0011 << dBus_cmd_payload_address[1:0]) :
                               dBus_cmd_payload_size == 2'd2 ?  4'b1111 :
                                                                4'b1111 ;
             mem_wdata       = dBus_cmd_payload_data;
 
-            dBus_cmd_ready  = 1'b1;
+            dBus_cmd_ready  = mem_cmd_ready;
         end
         else begin
-            mem_valid       = iBus_cmd_valid;
-            mem_instr       = 1'b1;
+            mem_cmd_valid   = iBus_cmd_valid && !mem_rsp_pending;
+            mem_cmd_instr   = 1'b1;
+            mem_cmd_wr      = 1'b0;
 
-            mem_addr        = { iBus_cmd_payload_pc[31:2], 2'b00 };
-            mem_wstrb       = 4'd0;
-            mem_wdata       = 32'd0;
+            mem_cmd_addr    = iBus_cmd_payload_pc;
+            mem_cmd_be      = 4'd0;
+            mem_cmd_wdata   = 32'd0;
 
-            iBus_cmd_ready  = iBus_cmd_valid;
+            iBus_cmd_ready  = mem_cmd_ready;
         end
     end
 
