@@ -14,20 +14,31 @@ static inline uint32_t rdcycle(void) {
     return cycle;
 }
 
+volatile static cnt = 0;
+
 int main() {
 
     GPIO_CONFIG = 0xff;
 
     uint32_t start;
 
+
     for (;;) {
 //        GPIO_DOUT_SET = 0x55;
 //        GPIO_DOUT_CLR = 0xaa;
+
+        for(int i=0;i<10;++i){
+            ++cnt;
+        }
 
         GPIO_DOUT = 0x55;
 
 //        start = rdcycle();
 //        while ((rdcycle() - start) <= 20000000);
+
+        for(int i=0;i<10;++i){
+            ++cnt;
+        }
 
         GPIO_DOUT = 0xaa;
 

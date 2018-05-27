@@ -4,7 +4,7 @@ TARGET          = $(TOOLS_PREFIX)/riscv32-unknown-elf
 AS              = $(TARGET)-as
 ASFLAGS         = -march=rv32i -mabi=ilp32
 LD              = $(TARGET)-gcc
-LDFLAGS         = -march=rv32i -mabi=ilp32 -Wl,-Tprogmem.lds -ffreestanding -nostartfiles
+LDFLAGS         = -march=rv32i -mabi=ilp32 -Wl,-Tprogmem.lds,-Map,progmem.map -ffreestanding -nostartfiles
 CC              = $(TARGET)-gcc
 CFLAGS          = -march=rv32i -mabi=ilp32 -Wall -Wextra -pedantic -DFREQ=$(FREQ_PLL)000000 -O2
 OBJCOPY         = $(TARGET)-objcopy
@@ -26,7 +26,7 @@ progmem.bin: progmem.elf
 	$(OBJCOPY) -O binary $< $@
 
 progmem.elf: progmem.o start.o progmem.lds
-	$(LD) $(LDFLAGS) -o $@ start.o progmem.o
+	$(LD) $(LDFLAGS) -o $@ start.o progmem.o > progmem.map
 
 #./output/progmem_syn.hex:
 #	icebram -g 32 2048 > $@

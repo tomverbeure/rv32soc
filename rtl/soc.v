@@ -59,16 +59,18 @@ module soc(
     vexriscv_wrapper
 `endif
     cpu (
-        .clk         (clk        ),
-        .resetn      (reset_     ),
-        .mem_cmd_valid   (mem_cmd_valid  ),
-        .mem_instr   (mem_instr  ),
-        .mem_ready   (mem_ready  ),
-        .mem_cmd_addr    (mem_cmd_addr   ),
-        .mem_cmd_wdata   (mem_cmd_wdata  ),
-        .mem_wstrb   (mem_wstrb  ),
-        .mem_rdata   (mem_rdata  ),
-        .irq         (irq        )
+        .clk            (clk),
+        .reset_         (reset_),
+        .mem_cmd_valid  (mem_cmd_valid),
+        .mem_cmd_ready  (mem_cmd_ready),
+        .mem_cmd_wr     (mem_cmd_wr),
+        .mem_cmd_instr  (mem_cmd_instr),
+        .mem_cmd_addr   (mem_cmd_addr),
+        .mem_cmd_wdata  (mem_cmd_wdata),
+        .mem_cmd_be     (mem_cmd_be),
+        .mem_rsp_ready  (mem_rsp_ready),
+        .mem_rsp_rdata  (mem_rsp_rdata),
+        .irq            (irq        )
     );
 
 `ifndef SYNTHESIS
@@ -77,9 +79,16 @@ module soc(
 
     always @(posedge clk) begin
         if (reset_ != 1'b0) begin
-            if (mem_cmd_valid === 1'bx 
-                || (mem_cmd_valid && mem_ready ===1'bx)
-                || (mem_cmd_valid && mem_ready && (^mem_rdata === 1'bx)))
+            if (   (mem_cmd_valid === 1'bx)
+                || (mem_cmd_valid && mem_cmd_ready ===1'bx)
+                || (mem_cmd_valid && mem_cmd_ready && 
+                        (   mem_cmd_instr === 1'bx 
+                         || mem_cmd_wr === 1'bx
+                         || mem_cmd_be === 1'bx
+                        ))
+                || (mem_rsp_ready === 1'bx)
+                || (mem_rsp_ready && (^mem_rsp_rdata === 1'bx))
+                )
             begin
                 $display("%t: %m has X on cpu bus. Aborting.", $time);
                 $finish;
@@ -92,27 +101,45 @@ module soc(
     // Address decoder and data multiplexer
     //============================================================
 
-    wire mem_cmd_wr = |mem_wstrb;
-
-    wire mem_cmd_sel_local_ram, mem_cmd_sel_gpio;
+    wire mem_cmd_sel_local_ram, mem_cmd_sel_gpio, mem_cmd_sel_void;
+    reg mem_cmd_sel_local_ram_reg, mem_cmd_sel_gpio_reg, mem_cmd_sel_void_reg;
 
     assign mem_cmd_sel_local_ram = mem_cmd_addr < (LOCAL_RAM_SIZE_KB * 1024);
     assign mem_cmd_sel_gpio      = mem_cmd_addr[31:12] == 20'hf0000;
+    assign mem_cmd_sel_void     = !mem_cmd_sel_local_ram && !mem_cmd_sel_gpio; 
 
-    assign mem_rdata = mem_cmd_sel_local_ram    ? mem_rdata_local_ram   : 
-                       mem_cmd_sel_gpio         ? mem_rdata_gpio        : 
-                                              32'd0;
-
-    assign mem_ready = mem_cmd_sel_local_ram    ? mem_ready_local_ram   :
-                       mem_cmd_sel_gpio         ? mem_ready_gpio        :
-                                              mem_ready_void;
-
-    reg mem_ready_void;
     always @(posedge clk) begin
-        mem_ready_void  <= mem_cmd_valid & !mem_ready_void;
+
+        if (mem_cmd_valid) begin
+            mem_cmd_sel_local_ram_reg <= mem_cmd_sel_local_ram;
+            mem_cmd_sel_gpio_reg      <= mem_cmd_sel_gpio;
+            mem_cmd_sel_void_reg      <= mem_cmd_sel_void;
+        end
 
         if (!reset_) begin
-            mem_ready_void  <= 1'b0;
+            mem_cmd_sel_local_ram_reg <= 1'b0;
+            mem_cmd_sel_gpio_reg      <= 1'b0;
+            mem_cmd_sel_void_reg      <= 1'b0;
+        end
+    end
+
+    // For now, we don't have any slaves that can stall a write
+    assign mem_cmd_ready    = 1'b1;
+
+    assign mem_rsp_rdata = mem_cmd_sel_local_ram_reg ? mem_rsp_rdata_local_ram   : 
+                           mem_cmd_sel_gpio_reg      ? mem_rsp_rdata_gpio        : 
+                                                       32'd0;
+
+    assign mem_rsp_ready = mem_cmd_sel_local_ram_reg ? mem_rsp_ready_local_ram   :
+                           mem_cmd_sel_gpio_reg      ? mem_rsp_ready_gpio        :
+                                                   mem_rsp_ready_void;
+
+    reg mem_rsp_ready_void;
+    always @(posedge clk) begin
+        mem_rsp_ready_void  <= mem_cmd_valid & !mem_cmd_wr && mem_cmd_sel_void;
+
+        if (!reset_) begin
+            mem_rsp_ready_void  <= 1'b0;
         end
     end
 
@@ -120,45 +147,27 @@ module soc(
     // LOCAL RAM
     //============================================================
   
+    reg mem_rsp_ready_local_ram;
+    reg [31:0] mem_rsp_rdata_local_ram;
 
-`ifdef USE_VEXRISCV
-    reg mem_ready_local_ram;
-    reg [31:0] mem_rdata_local_ram;
-
-    reg mem_ready_local_ram_p1;
+    reg mem_rsp_ready_local_ram_p1;
 
     always @(posedge clk) begin
-        mem_ready_local_ram_p1 <= mem_cmd_valid & mem_cmd_sel_local_ram;
-        mem_ready_local_ram    <= mem_ready_local_ram_p1;
+        mem_rsp_ready_local_ram_p1 <= mem_cmd_valid & !mem_cmd_wr & mem_cmd_sel_local_ram;
+        mem_rsp_ready_local_ram    <= mem_rsp_ready_local_ram_p1;
 
-        mem_rdata_local_ram    <= local_ram_rdata;
+        mem_rsp_rdata_local_ram        <= local_ram_rdata;
 
         if (!reset_) begin
-            mem_ready_local_ram     <= 1'b0;
-            mem_ready_local_ram_p1  <= 1'b0;
+            mem_rsp_ready_local_ram     <= 1'b0;
+            mem_rsp_ready_local_ram_p1  <= 1'b0;
         end
     end
 
     wire [3:0] local_ram_wr; 
     wire local_ram_rd;
-    assign local_ram_wr = (mem_cmd_valid && mem_cmd_sel_local_ram) ? mem_wstrb : 4'b0;
-    assign local_ram_rd = (mem_cmd_valid && mem_cmd_sel_local_ram && !(|mem_wstrb));
-`else
-    always @(posedge clk) begin
-        mem_ready_local_ram <= mem_cmd_valid & mem_cmd_sel_local_ram & !mem_ready_local_ram;
-
-        if (!reset_) begin
-            mem_ready_local_ram  <= 1'b0;
-        end
-    end
-
-    wire [3:0] local_ram_wr; 
-    wire local_ram_rd;
-    assign local_ram_wr = (mem_cmd_valid && mem_cmd_sel_local_ram & !mem_ready_local_ram) ? mem_wstrb : 4'b0;
-    assign local_ram_rd = (mem_cmd_valid && mem_cmd_sel_local_ram & !mem_ready_local_ram & !(|mem_wstrb));
-
-    assign mem_rdata_local_ram = local_ram_rdata;
-`endif
+    assign local_ram_wr = (mem_cmd_valid && mem_cmd_sel_local_ram &&  mem_cmd_wr) ? mem_cmd_be : 4'b0;
+    assign local_ram_rd = (mem_cmd_valid && mem_cmd_sel_local_ram && !mem_cmd_wr);
 
     localparam local_ram_addr_bits = $clog2(LOCAL_RAM_SIZE_KB * 1024);
     wire [31:0] local_ram_rdata;
@@ -176,20 +185,21 @@ module soc(
     // GPIO
     //============================================================
 
-    wire mem_ready_gpio;
-    wire [31:0] mem_rdata_gpio;
+    wire mem_rsp_ready_gpio;
+    wire [31:0] mem_rsp_rdata_gpio;
 
     gpio #(.NR_GPIOS(8)) u_gpio(
         .clk        (clk),
         .reset_     (reset_),
 
-        .mem_cmd_sel  (mem_cmd_sel_gpio),
-        .mem_cmd_valid(mem_cmd_valid),
-        .mem_ready(mem_ready_gpio),
-        .mem_cmd_wr   (mem_cmd_wr),
-        .mem_cmd_addr (mem_cmd_addr[11:0]),
-        .mem_cmd_wdata(mem_cmd_wdata),
-        .mem_rdata(mem_rdata_gpio),
+        .mem_cmd_sel    (mem_cmd_sel_gpio),
+        .mem_cmd_valid  (mem_cmd_valid),
+        .mem_cmd_wr     (mem_cmd_wr),
+        .mem_cmd_addr   (mem_cmd_addr[11:0]),
+        .mem_cmd_wdata  (mem_cmd_wdata),
+
+        .mem_rsp_ready  (mem_rsp_ready_gpio),
+        .mem_rsp_rdata  (mem_rsp_rdata_gpio),
 
         .gpio_oe(gpio_oe),
         .gpio_do(gpio_do),

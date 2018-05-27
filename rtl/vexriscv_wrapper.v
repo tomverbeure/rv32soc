@@ -1,7 +1,7 @@
 
 module vexriscv_wrapper(
     input             clk,
-    input             resetn,
+    input             reset_,
 
     output reg        mem_cmd_valid,
     input             mem_cmd_ready,
@@ -35,7 +35,7 @@ module vexriscv_wrapper(
 
     VexRiscv u_vexriscv(
         .clk(clk),
-        .reset(!resetn),
+        .reset(!reset_),
 
         .iBus_cmd_valid(iBus_cmd_valid),
         .iBus_cmd_ready(iBus_cmd_ready),
@@ -77,10 +77,15 @@ module vexriscv_wrapper(
     end
 
     assign iBus_rsp_ready   = mem_rsp_ready &&  mem_rsp_pending_instr;
-    assign iDus_rsp_ready   = mem_rsp_ready && !mem_rsp_pending_instr;
+    assign dBus_rsp_ready   = mem_rsp_ready && !mem_rsp_pending_instr;
 
-    assign iBus_rsp_inst    = mem_rdata;
-    assign dBus_rsp_data    = mem_rdata;
+`ifndef SYNTHESIS
+    assign iBus_rsp_inst    = iBus_rsp_ready ? mem_rsp_rdata : {32{1'bz}};
+    assign dBus_rsp_data    = dBus_rsp_ready ? mem_rsp_rdata : {32{1'bz}};
+`else
+    assign iBus_rsp_inst    = mem_rsp_rdata;
+    assign dBus_rsp_data    = mem_rsp_rdata;
+`endif
 
     assign iBus_rsp_error   = 1'b0;
     assign dBus_rsp_error   = 1'b0;
@@ -99,12 +104,12 @@ module vexriscv_wrapper(
                               dBus_cmd_payload_size == 2'd1 ? (4'b0011 << dBus_cmd_payload_address[1:0]) :
                               dBus_cmd_payload_size == 2'd2 ?  4'b1111 :
                                                                4'b1111 ;
-            mem_wdata       = dBus_cmd_payload_data;
+            mem_cmd_wdata   = dBus_cmd_payload_data;
 
-            dBus_cmd_ready  = mem_cmd_ready;
+            dBus_cmd_ready  = mem_cmd_ready && !mem_rsp_pending;
         end
         else begin
-            mem_cmd_valid   = iBus_cmd_valid && !mem_rsp_pending;
+            mem_cmd_valid   = iBus_cmd_valid && !(mem_rsp_pending && !mem_rsp_ready);
             mem_cmd_instr   = 1'b1;
             mem_cmd_wr      = 1'b0;
 
@@ -112,7 +117,7 @@ module vexriscv_wrapper(
             mem_cmd_be      = 4'd0;
             mem_cmd_wdata   = 32'd0;
 
-            iBus_cmd_ready  = mem_cmd_ready;
+            iBus_cmd_ready  = mem_cmd_ready && !(mem_rsp_pending && !mem_rsp_ready);
         end
     end
 
