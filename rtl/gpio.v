@@ -32,21 +32,18 @@ module gpio
                 `GPIO_DOUT_CLR_ADDR: gpio_do     <= gpio_do & ~mem_cmd_wdata[NR_GPIOS-1:0];
             endcase
         end
+
+        mem_rsp_ready   <= mem_cmd_valid && mem_cmd_sel && !mem_cmd_wr;
     end
 
     always @(*) begin
         mem_rsp_rdata = 32'd0;
-        mem_rsp_ready = 1'b0;
 
-        if (mem_cmd_valid && mem_cmd_sel && !mem_cmd_wr) begin
-            case({mem_cmd_addr[5:2],2'd0})
-                `GPIO_CONFIG_ADDR: mem_rsp_rdata = gpio_oe;
-                `GPIO_DOUT_ADDR:   mem_rsp_rdata = gpio_do;
-                `GPIO_DIN_ADDR:    mem_rsp_rdata = gpio_di;
-            endcase
-
-            mem_rsp_ready   = 1'b1;
-        end
+        case({mem_cmd_addr[5:2],2'd0})
+            `GPIO_CONFIG_ADDR: mem_rsp_rdata = gpio_oe;
+            `GPIO_DOUT_ADDR:   mem_rsp_rdata = gpio_do;
+            `GPIO_DIN_ADDR:    mem_rsp_rdata = gpio_di;
+        endcase
     end
 
 endmodule

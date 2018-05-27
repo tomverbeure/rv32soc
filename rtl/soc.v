@@ -132,7 +132,7 @@ module soc(
 
     assign mem_rsp_ready = mem_cmd_sel_local_ram_reg ? mem_rsp_ready_local_ram   :
                            mem_cmd_sel_gpio_reg      ? mem_rsp_ready_gpio        :
-                                                   mem_rsp_ready_void;
+                                                       mem_rsp_ready_void;
 
     reg mem_rsp_ready_void;
     always @(posedge clk) begin
