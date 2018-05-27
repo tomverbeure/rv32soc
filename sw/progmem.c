@@ -16,6 +16,8 @@ static inline uint32_t rdcycle(void) {
 
 volatile static cnt = 0;
 
+#define WAIT_CYCLES 200000
+
 int main() {
 
     GPIO_CONFIG = 0xff;
@@ -27,7 +29,7 @@ int main() {
 //        GPIO_DOUT_SET = 0x55;
 //        GPIO_DOUT_CLR = 0xaa;
 
-        for(int i=0;i<10;++i){
+        for(int i=0;i<WAIT_CYCLES;++i){
             ++cnt;
         }
 
@@ -36,7 +38,7 @@ int main() {
 //        start = rdcycle();
 //        while ((rdcycle() - start) <= 20000000);
 
-        for(int i=0;i<10;++i){
+        for(int i=0;i<WAIT_CYCLES;++i){
             ++cnt;
         }
 

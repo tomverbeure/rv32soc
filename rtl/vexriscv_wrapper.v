@@ -20,7 +20,7 @@ module vexriscv_wrapper(
     wire        iBus_cmd_valid;
     reg         iBus_cmd_ready;
     wire [31:0] iBus_cmd_payload_pc;
-    reg         iBus_rsp_ready;
+    wire        iBus_rsp_ready;
     wire        iBus_rsp_error;
     wire [31:0] iBus_rsp_inst;
     wire        dBus_cmd_valid;
@@ -29,7 +29,7 @@ module vexriscv_wrapper(
     wire [31:0] dBus_cmd_payload_address;
     wire [31:0] dBus_cmd_payload_data;
     wire [1:0]  dBus_cmd_payload_size;
-    reg         dBus_rsp_ready;
+    wire        dBus_rsp_ready;
     wire        dBus_rsp_error;
     wire [31:0] dBus_rsp_data;
 

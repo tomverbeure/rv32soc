@@ -25,7 +25,7 @@ progmem.hex: progmem.elf
 progmem.bin: progmem.elf
 	$(OBJCOPY) -O binary $< $@
 
-progmem.elf: progmem.o start.o progmem.lds
+progmem.elf: progmem.o start.o progmem.lds Makefile
 	$(LD) $(LDFLAGS) -o $@ start.o progmem.o > progmem.map
 
 #./output/progmem_syn.hex:
