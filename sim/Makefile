@@ -4,7 +4,8 @@ LATTICE_CELLS_SIM := $(shell yosys-config --datdir/ice40/cells_sim.v)
 IVERILOG_PREFIX = /opt/iverilog/bin/
 #IVERILOG	= $(IVERILOG_PREFIX)/iverilog
 IVERILOG	= iverilog
-CPU         = USE_VEXRISCV
+#CPU         = USE_VEXRISCV
+CPU         = USE_PICORV32
 
 RTL = ../rtl
 TB = ../tb
@@ -12,8 +13,8 @@ ICICLE_RTL =  ../../icicle
 
 
 VERILOG_CORE    = $(RTL)/top.v $(RTL)/soc.v $(RTL)/gpio.v $(RTL)/reset_gen.v \
-			$(RTL)/picorv32.v \
 			$(RTL)/icicle_wrapper.v \
+			$(RTL)/picorv32_wrapper.v $(RTL)/picorv32.v \
 			$(RTL)/vexriscv_wrapper.v ../vexriscv/VexRiscv_FullNoMmuNoCacheNoCsrNoDbg.v
 
 VERILOG_XILINX  = $(RTL)/pads_generic.v $(RTL)/pll_generic.v
@@ -45,7 +46,7 @@ sw:
 	cp ../sw/progmem.hex output
 
 waves:
-	gtkwave ./output/waves.vcd waves.gtkw
+	gtkwave ./output/waves.vcd 
 
 tb: ./output ./output/tb_xilinx # ./output/tb_altera ./output/tb_lattice
 

@@ -14,13 +14,12 @@ module soc(
     parameter integer LOCAL_RAM_SIZE_KB = 8;
     parameter integer NR_GPIOS          = 8;
 
-    parameter [31:0] STACKADDR          = LOCAL_RAM_SIZE_KB * 1024;
     parameter [31:0] PROGADDR_RESET     = 32'h 0000_0000;
     parameter [31:0] PROGADDR_IRQ       = 32'h 0000_0010;
     parameter integer BARREL_SHIFTER    = 1;
     parameter integer COMPRESSED_ISA    = 1;
     parameter integer ENABLE_MUL        = 1;
-    parameter integer ENABLE_FAST_MUL   = 0;
+    parameter integer ENABLE_FAST_MUL   = 1;
     parameter integer ENABLE_DIV        = 1;
     parameter integer ENABLE_IRQ        = 1;
     parameter integer ENABLE_IRQ_QREGS  = 0;
@@ -39,18 +38,7 @@ module soc(
     assign irq = 32'd0;
 
 `ifdef USE_PICORV32
-    picorv32 #(
-        .STACKADDR(STACKADDR),
-        .PROGADDR_RESET(PROGADDR_RESET),
-        .PROGADDR_IRQ(PROGADDR_IRQ),
-        .BARREL_SHIFTER(BARREL_SHIFTER),
-        .COMPRESSED_ISA(COMPRESSED_ISA),
-        .ENABLE_MUL(ENABLE_MUL),
-        .ENABLE_FAST_MUL(ENABLE_FAST_MUL),
-        .ENABLE_DIV(ENABLE_DIV),
-        .ENABLE_IRQ(1),
-        .ENABLE_IRQ_QREGS(0)
-    ) 
+    picorv32_wrapper
 `endif
 `ifdef USE_ICICLE
     icicle_wrapper
