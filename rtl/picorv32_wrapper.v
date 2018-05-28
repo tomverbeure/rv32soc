@@ -1,3 +1,4 @@
+`include "soc_picorv32_settings.v"
 
 module picorv32_wrapper(
     input             clk,
@@ -5,11 +6,11 @@ module picorv32_wrapper(
 
     output reg        mem_cmd_valid,
     input             mem_cmd_ready,
-    output reg        mem_cmd_instr,
-    output reg        mem_cmd_wr,
-    output reg [31:0] mem_cmd_addr,
-    output reg [31:0] mem_cmd_wdata,
-    output reg [ 3:0] mem_cmd_be,
+    output            mem_cmd_instr,
+    output            mem_cmd_wr,
+    output     [31:0] mem_cmd_addr,
+    output     [31:0] mem_cmd_wdata,
+    output     [ 3:0] mem_cmd_be,
 
     input             mem_rsp_ready,
     input      [31:0] mem_rsp_rdata, 
@@ -19,22 +20,22 @@ module picorv32_wrapper(
 
     parameter [31:0] PROGADDR_RESET             = 32'h 0000_0000;
     parameter [31:0] PROGADDR_IRQ               = 32'h 0000_0010;
-    parameter integer BARREL_SHIFTER            = 1;
-    parameter integer COMPRESSED_ISA            = 0;
-    parameter integer ENABLE_MUL                = 1;
-    parameter integer ENABLE_FAST_MUL           = 1;
-    parameter integer ENABLE_DIV                = 1;
-    parameter integer ENABLE_IRQ                = 0;
+    parameter integer BARREL_SHIFTER            = `BARREL_SHIFTER;
+    parameter integer COMPRESSED_ISA            = `ENABLE_COMPRESSED_ISA;
+    parameter integer ENABLE_MUL                = `ENABLE_MUL;
+    parameter integer ENABLE_FAST_MUL           = `ENABLE_FAST_MUL;
+    parameter integer ENABLE_DIV                = `ENABLE_DIV;
+    parameter integer ENABLE_IRQ                = `ENABLE_IRQ;
+    parameter integer ENABLE_COUNTERS           = `ENABLE_COUNTERS;
+    parameter integer ENABLE_COUNTERS64         = `ENABLE_COUNTERS64;
+    parameter integer CATCH_MISALIGN            = `CATCH_MISALIGN;
+    parameter integer CATCH_ILLINSN             = `CATCH_ILLINSN;
     parameter integer ENABLE_IRQ_QREGS          = 0;
     parameter integer ENABLE_IRQ_TIMER          = 0;
-    parameter integer ENABLE_COUNTERS           = 0;
-    parameter integer ENABLE_COUNTERS64         = 0;
     parameter integer TWO_STAGE_SHIFT           = 0;
-    parameter integer CATCH_MISALIGN            = 0;
-    parameter integer CATCH_ILLINSN             = 0;
 
     wire        pico_mem_valid;
-    reg         pico_mem_instr;
+    wire        pico_mem_instr;
     reg         pico_mem_ready;
     wire [31:0] pico_mem_addr;
     wire [3:0]  pico_mem_wstrb;
