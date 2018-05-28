@@ -5,7 +5,7 @@ IVERILOG_PREFIX = /opt/iverilog/bin/
 #IVERILOG	= $(IVERILOG_PREFIX)/iverilog
 IVERILOG	= iverilog
 #CPU         = USE_VEXRISCV
-CPU         = USE_PICORV32
+CPU         ?= USE_PICORV32
 
 RTL = ../rtl
 TB = ../tb
