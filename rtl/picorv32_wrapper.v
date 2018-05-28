@@ -21,13 +21,14 @@ module picorv32_wrapper(
     parameter [31:0] PROGADDR_RESET             = 32'h 0000_0000;
     parameter [31:0] PROGADDR_IRQ               = 32'h 0000_0010;
     parameter integer BARREL_SHIFTER            = `BARREL_SHIFTER;
-    parameter integer COMPRESSED_ISA            = `ENABLE_COMPRESSED_ISA;
+    parameter integer COMPRESSED_ISA            = `COMPRESSED_ISA;
     parameter integer ENABLE_MUL                = `ENABLE_MUL;
     parameter integer ENABLE_FAST_MUL           = `ENABLE_FAST_MUL;
     parameter integer ENABLE_DIV                = `ENABLE_DIV;
     parameter integer ENABLE_IRQ                = `ENABLE_IRQ;
     parameter integer ENABLE_COUNTERS           = `ENABLE_COUNTERS;
     parameter integer ENABLE_COUNTERS64         = `ENABLE_COUNTERS64;
+    parameter integer ENABLE_REGS_DUALPORT      = `ENABLE_REGS_DUALPORT;
     parameter integer CATCH_MISALIGN            = `CATCH_MISALIGN;
     parameter integer CATCH_ILLINSN             = `CATCH_ILLINSN;
     parameter integer ENABLE_IRQ_QREGS          = 0;
@@ -42,6 +43,26 @@ module picorv32_wrapper(
     wire [31:0] pico_mem_wdata;
     wire [31:0] pico_mem_rdata;
 
+`ifndef SYNTHESIS
+    initial begin
+        $display("Pico settigns:");
+        $display("BARREL_SHIFTER        = %1d", BARREL_SHIFTER);
+        $display("COMPRESSED_ISA        = %1d", COMPRESSED_ISA);
+        $display("ENABLE_MUL            = %1d", ENABLE_MUL);
+        $display("ENABLE_FAST_MUL       = %1d", ENABLE_FAST_MUL);
+        $display("ENABLE_DIV            = %1d", ENABLE_DIV);
+        $display("ENABLE_IRQ            = %1d", ENABLE_IRQ);
+        $display("ENABLE_COUNTERS       = %1d", ENABLE_COUNTERS);
+        $display("ENABLE_COUNTERS64     = %1d", ENABLE_COUNTERS64);
+        $display("ENABLE_REGS_DUALPORT  = %1d", ENABLE_REGS_DUALPORT);
+        $display("CATCH_MISALIGN        = %1d", CATCH_MISALIGN);
+        $display("CATCH_ILLINSN         = %1d", CATCH_ILLINSN);
+        $display("ENABLE_IRQ_QREGS      = %1d", 0);
+        $display("ENABLE_IRQ_TIMER      = %1d", 0);
+        $display("TWO_STAGE_SHIFT       = %1d", 0);
+    end
+`endif
+
     picorv32 #(
         .PROGADDR_RESET(PROGADDR_RESET),
         .PROGADDR_IRQ(PROGADDR_IRQ),
@@ -53,6 +74,7 @@ module picorv32_wrapper(
         .ENABLE_IRQ_QREGS(ENABLE_IRQ_QREGS),
         .ENABLE_COUNTERS(ENABLE_COUNTERS),
         .ENABLE_COUNTERS64(ENABLE_COUNTERS64),
+        .ENABLE_REGS_DUALPORT(ENABLE_REGS_DUALPORT),
         .BARREL_SHIFTER(BARREL_SHIFTER),
         .TWO_STAGE_SHIFT(TWO_STAGE_SHIFT),
         .CATCH_MISALIGN(CATCH_MISALIGN),
