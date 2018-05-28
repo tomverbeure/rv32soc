@@ -18,5 +18,15 @@ SECTIONS {
 
         . = ALIGN(4);
         bss_end = .;
+
+        . = ALIGN(4);
+        sbss_start = .;
+
+        *(.sbss);
+
+        . = ALIGN(4);
+        . += 4;
+        sbss_end = .;
+
     } > bram
 }

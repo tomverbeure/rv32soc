@@ -16,7 +16,7 @@ module tb();
 		$dumpvars(0);
 	
         repeat (10000) @(posedge clk);
-        $display("Simulation finished.");
+        $display("Simulation finished (max cycles).");
         $finish;
     end
 

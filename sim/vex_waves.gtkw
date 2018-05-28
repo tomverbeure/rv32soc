@@ -1,0 +1,110 @@
+[*]
+[*] GTKWave Analyzer v3.3.90 (w)1999-2018 BSI
+[*] Sun May 27 04:50:44 2018
+[*]
+[dumpfile] "/home/tom/projects/rv32soc/sim/output/waves.vcd"
+[dumpfile_mtime] "Sun May 27 04:45:11 2018"
+[dumpfile_size] 29835877
+[savefile] "/home/tom/projects/rv32soc/sim/waves.gtkw"
+[timestart] 6672500
+[size] 1782 1017
+[pos] -1 -1
+*-16.165283 6888900 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] tb.
+[treeopen] tb.u_top.
+[treeopen] tb.u_top.u_soc.
+[treeopen] tb.u_top.u_soc.cpu.
+[sst_width] 225
+[signals_width] 456
+[sst_expanded] 1
+[sst_vpaned_height] 345
+@28
+tb.clk
+tb.led1
+tb.led2
+tb.u_top.led3
+tb.u_top.reset_
+@22
+tb.u_top.u_soc.u_gpio.gpio_di[7:0]
+tb.u_top.u_soc.u_gpio.gpio_do[7:0]
+tb.u_top.u_soc.u_gpio.gpio_oe[7:0]
+@28
+tb.u_top.u_soc.u_gpio.reset_
+@22
+tb.u_top.u_soc.u_gpio.gpio_di[7:0]
+tb.u_top.u_soc.u_gpio.gpio_do[7:0]
+tb.u_top.u_soc.u_gpio.gpio_oe[7:0]
+@200
+-
+@28
+tb.u_top.u_soc.cpu.mem_rsp_pending
+tb.u_top.u_soc.cpu.mem_rsp_pending_instr
+@200
+-
+@28
+tb.u_top.u_soc.cpu.iBus_cmd_valid
+tb.u_top.u_soc.cpu.iBus_cmd_ready
+@22
+tb.u_top.u_soc.cpu.iBus_cmd_payload_pc[31:0]
+@200
+-
+@28
+tb.u_top.u_soc.cpu.iBus_rsp_ready
+@22
+tb.u_top.u_soc.cpu.iBus_rsp_inst[31:0]
+@200
+-
+@28
+tb.u_top.u_soc.cpu.dBus_cmd_valid
+tb.u_top.u_soc.cpu.dBus_cmd_ready
+tb.u_top.u_soc.cpu.dBus_cmd_payload_wr
+@22
+tb.u_top.u_soc.cpu.dBus_cmd_payload_address[31:0]
+@23
+tb.u_top.u_soc.cpu.dBus_cmd_payload_data[31:0]
+@28
+tb.u_top.u_soc.cpu.dBus_cmd_payload_size[1:0]
+@200
+-
+@28
+tb.u_top.u_soc.cpu.dBus_rsp_ready
+@22
+tb.u_top.u_soc.cpu.dBus_rsp_data[31:0]
+@200
+-
+@28
+tb.u_top.u_soc.cpu.mem_cmd_valid
+tb.u_top.u_soc.cpu.mem_cmd_ready
+tb.u_top.u_soc.cpu.mem_cmd_wr
+tb.u_top.u_soc.cpu.mem_cmd_instr
+@22
+tb.u_top.u_soc.cpu.mem_cmd_addr[31:0]
+tb.u_top.u_soc.cpu.mem_cmd_be[3:0]
+tb.u_top.u_soc.cpu.mem_cmd_wdata[31:0]
+@200
+-
+@28
+tb.u_top.u_soc.cpu.mem_rsp_ready
+tb.u_top.u_soc.cpu.mem_rsp_pending
+@22
+tb.u_top.u_soc.cpu.mem_rsp_rdata[31:0]
+@200
+-
+@22
+tb.u_top.u_soc.memory.wr[3:0]
+@28
+tb.u_top.u_soc.memory.rd
+@22
+tb.u_top.u_soc.memory.addr[10:0]
+tb.u_top.u_soc.memory.wdata[31:0]
+tb.u_top.u_soc.memory.rdata[31:0]
+@200
+-
+@28
+tb.u_top.u_soc.mem_rsp_ready
+tb.u_top.u_soc.mem_rsp_ready_gpio
+tb.u_top.u_soc.mem_rsp_ready_local_ram
+tb.u_top.u_soc.mem_rsp_ready_local_ram_p1
+tb.u_top.u_soc.mem_rsp_ready_void
+[pattern_trace] 1
+[pattern_trace] 0
