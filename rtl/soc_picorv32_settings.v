@@ -1,5 +1,3 @@
-`define USE_PICORV32
-
 `define ENABLE_IRQ                  0
 `define ENABLE_COMPRESSED_ISA       0
 `define ENABLE_MUL                  1
