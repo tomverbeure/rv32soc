@@ -1,0 +1,23 @@
+
+set_io osc_clk      129
+
+# Flash QSPI, not the config SPI! 
+set_io spi_csn      81
+set_io spi_ck       82
+set_io spi_mosi     83
+set_io spi_miso     84
+
+set_io led1         70
+set_io led2         68
+set_io led3         67
+set_io led4         71
+
+set_io button1      63
+set_io button2      64
+
+set_io uart_rx      88
+set_io uart_tx      85
+
+set_io i2c_scl      105
+set_io i2c_sda      102
+

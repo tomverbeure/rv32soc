@@ -1,0 +1,8 @@
+verilog_defines -D USE_PICORV32
+read_verilog -noautowire rv32soc_all.v
+#proc
+#opt -full
+#alumacc
+#share -aggressive
+synth_ice40 -top top -blif chip.blif
+
