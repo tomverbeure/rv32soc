@@ -1,45 +1,37 @@
 
 
 # 100MHZ Oscillator
-NET "osc_clk" LOC = U10 | IOSTANDARD = LVCMOS33;
+NET "osc_clk" LOC = U10 |IOSTANDARD = LVCMOS33;
 
 
 
 #============================================================
 # IDT ICS307 Clock Generator
 #============================================================
-
 #NET "idt_sclk"   LOC = F2  | IOSTANDARD = LVCMOS33;
 #NET "idt_strobe" LOC = G5  | IOSTANDARD = LVCMOS33;
 #NET "idt_data"   LOC = F1  | IOSTANDARD = LVCMOS33;
 #
 #NET "idt_iclk"   LOC = J2  | IOSTANDARD = LVCMOS33;
 #NET "idt_clk1"   LOC = J4  | IOSTANDARD = LVCMOS33;
-
 #============================================================
 # SPI
 #============================================================
-
 #NET "spi_cs_" LOC = U3  | IOSTANDARD = LVCMOS33;
 #NET "spi_clk" LOC = U16 | IOSTANDARD = LVCMOS33;
 #NET "spi_dq0" LOC = T4  | IOSTANDARD = LVCMOS33;
 #NET "spi_dq1" LOC = N10 | IOSTANDARD = LVCMOS33;
-
 #============================================================
 # LEDs
 #============================================================
-
 #NET "led_green" LOC = H1  | IOSTANDARD = LVCMOS33;
 #NET "led_blue"  LOC = L1  | IOSTANDARD = LVCMOS33;
-
-NET "led1"       LOC = H1  | IOSTANDARD = LVCMOS33;
-NET "led2"       LOC = L1  | IOSTANDARD = LVCMOS33;
-NET "led3"       LOC = U16 | IOSTANDARD = LVCMOS33;     # spi_clk
-
+NET "led1"       LOC = H1  |IOSTANDARD = LVCMOS33;
+NET "led2"       LOC = L1  |IOSTANDARD = LVCMOS33;
+NET "led3"       LOC = U16 |IOSTANDARD = LVCMOS33;     # spi_clk
 #============================================================
 # AUDIO - Wolfson CODEC
 #============================================================
-
 ## mode is pulled down to GND -> two wire mode: I2C
 ## csb is pulled down to GND -> I2C addr 0x34
 #NET "audio_mclk"   LOC = U9  | IOSTANDARD = LVCMOS33;
@@ -50,14 +42,12 @@ NET "led3"       LOC = U16 | IOSTANDARD = LVCMOS33;     # spi_clk
 #NET "audio_daclrc" LOC = V15 | IOSTANDARD = LVCMOS33;
 #NET "audio_sdin"   LOC = T3  | IOSTANDARD = LVCMOS33;
 #NET "audio_sclk"   LOC = R10 | IOSTANDARD = LVCMOS33;
-
-NET "i2c_sda"   LOC = T3  | IOSTANDARD = LVCMOS33;
-NET "i2c_scl"   LOC = R10 | IOSTANDARD = LVCMOS33;
+NET "i2c_sda"   LOC = T3  |IOSTANDARD = LVCMOS33;
+NET "i2c_scl"   LOC = R10 |IOSTANDARD = LVCMOS33;
 
 #============================================================
 # DDR2 DRAM
 #============================================================
-
 #NET "sdram_a[0]"   LOC = F11 | IOSTANDARD = SSTL18_I;
 #NET "sdram_a[1]"   LOC = D13 | IOSTANDARD = SSTL18_I;
 #NET "sdram_a[2]"   LOC = E13 | IOSTANDARD = SSTL18_I;
@@ -125,11 +115,9 @@ NET "i2c_scl"   LOC = R10 | IOSTANDARD = LVCMOS33;
 #NET "sdram_dqs[2]" LOC = J15 | IOSTANDARD = SSTL18_I;
 #NET "sdram_dqs[1]" LOC = L18 | IOSTANDARD = SSTL18_I;
 #NET "sdram_dqs[0]" LOC = R15 | IOSTANDARD = SSTL18_I;
-
 #============================================================
 # VGA Out - TI THS8135
 #============================================================
-
 #NET "vo_clk"  LOC = E10  | IOSTANDARD = LVCMOS33;   # CLK
 #
 #NET "vo_vsync"  LOC = D1  | IOSTANDARD = LVCMOS33;  # B2B A[9]
@@ -176,7 +164,6 @@ NET "i2c_scl"   LOC = R10 | IOSTANDARD = LVCMOS33;
 #NET "vo_b[0]" LOC = A6  | IOSTANDARD = LVCMOS33;    # B2
                                                     # B1 = GND
                                                     # B0 = GND
-
 #============================================================
 # USB Host - ISP1760BE
 #============================================================
@@ -223,12 +210,12 @@ NET "i2c_scl"   LOC = R10 | IOSTANDARD = LVCMOS33;
 #NET "usb_d[1]"  LOC = xx  | IOSTANDARD = LVCMOS33;       # Pin xxx
 #NET "usb_d[0]"  LOC = xx  | IOSTANDARD = LVCMOS33;       # Pin xxx
 #
-
 #============================================================
 # Board to Board Connector
 #============================================================
 #NET "b2b_a[18]"  LOC = E5  | IOSTANDARD = LVCMOS33;          # B2B A[18]
 #NET "b2b_aa[8]"  LOC = R7  | IOSTANDARD = LVCMOS33;          # B2B A'[8]
 #NET "b2b_aa[16]" LOC = B7  | IOSTANDARD = LVCMOS33;          # B2B A'[16]
-
-
+#Created by Constraints Editor (xc3s1600e-fg320-5) - 2018/05/29
+NET "osc_clk" TNM_NET = osc_clk;
+TIMESPEC TS_osc_clk = PERIOD "osc_clk" 10 ns HIGH 50%;
