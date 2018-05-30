@@ -15,7 +15,7 @@ update_ram: progmem.mif
 .PHONY: progmem.mif
 progmem.mif:
 	cd ../sw && make
-	../misc/create_mif.rb -d 2048 -w 32 ../sw/progmem.bin > progmem.mif
+	../misc/create_mif.rb -v -d 2048 -w 32 ../sw/progmem.bin > progmem.mif
 
 check:
 	$(QUARTUS_ROOTDIR)/bin/quartus_pgm -a

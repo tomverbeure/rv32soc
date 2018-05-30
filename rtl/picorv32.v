@@ -43,7 +43,7 @@
 `endif
 
 // uncomment this for register file in extra module
-// `define PICORV32_REGS picorv32_regs
+`define PICORV32_REGS picorv32_regs
 
 // this macro can be used to check if the verilog files in your
 // design are read in the correct order.
@@ -526,24 +526,26 @@ module picorv32 #(
 		end
 	end
 
-	always @(posedge clk) begin
-		if (resetn && !trap) begin
-			if (mem_do_prefetch || mem_do_rinst || mem_do_rdata)
-				`assert(!mem_do_wdata);
-
-			if (mem_do_prefetch || mem_do_rinst)
-				`assert(!mem_do_rdata);
-
-			if (mem_do_rdata)
-				`assert(!mem_do_prefetch && !mem_do_rinst);
-
-			if (mem_do_wdata)
-				`assert(!(mem_do_prefetch || mem_do_rinst || mem_do_rdata));
-
-			if (mem_state == 2 || mem_state == 3)
-				`assert(mem_valid || mem_do_prefetch);
-		end
-	end
+//`ifndef BLAH
+//	always @(posedge clk) begin
+//		if (resetn && !trap) begin
+//			if (mem_do_prefetch || mem_do_rinst || mem_do_rdata)
+//				`assert(!mem_do_wdata);
+//
+//			if (mem_do_prefetch || mem_do_rinst)
+//				`assert(!mem_do_rdata);
+//
+//			if (mem_do_rdata)
+//				`assert(!mem_do_prefetch && !mem_do_rinst);
+//
+//			if (mem_do_wdata)
+//				`assert(!(mem_do_prefetch || mem_do_rinst || mem_do_rdata));
+//
+//			if (mem_state == 2 || mem_state == 3)
+//				`assert(mem_valid || mem_do_prefetch);
+//		end
+//	end
+//`endif
 
 	always @(posedge clk) begin
 		if (!resetn || trap) begin
@@ -576,10 +578,10 @@ module picorv32 #(
 					end
 				end
 				1: begin
-					`assert(mem_wstrb == 0);
-					`assert(mem_do_prefetch || mem_do_rinst || mem_do_rdata);
-					`assert(mem_valid == !mem_la_use_prefetched_high_word);
-					`assert(mem_instr == (mem_do_prefetch || mem_do_rinst));
+//					`assert(mem_wstrb == 0);
+//					`assert(mem_do_prefetch || mem_do_rinst || mem_do_rdata);
+//					`assert(mem_valid == !mem_la_use_prefetched_high_word);
+//					`assert(mem_instr == (mem_do_prefetch || mem_do_rinst));
 					if (mem_xfer) begin
 						if (COMPRESSED_ISA && mem_la_read) begin
 							mem_valid <= 1;
@@ -602,16 +604,16 @@ module picorv32 #(
 					end
 				end
 				2: begin
-					`assert(mem_wstrb != 0);
-					`assert(mem_do_wdata);
+//					`assert(mem_wstrb != 0);
+//					`assert(mem_do_wdata);
 					if (mem_xfer) begin
 						mem_valid <= 0;
 						mem_state <= 0;
 					end
 				end
 				3: begin
-					`assert(mem_wstrb == 0);
-					`assert(mem_do_prefetch);
+//					`assert(mem_wstrb == 0);
+//					`assert(mem_do_prefetch);
 					if (mem_do_rinst) begin
 						mem_state <= 0;
 					end
@@ -1476,10 +1478,10 @@ module picorv32 #(
 				case (1'b1)
 					latched_branch: begin
 						current_pc = latched_store ? (latched_stalu ? alu_out_q : reg_out) & ~1 : reg_next_pc;
-						`debug($display("ST_RD:  %2d 0x%08x, BRANCH 0x%08x", latched_rd, reg_pc + (latched_compr ? 2 : 4), current_pc);)
+//						`debug($display("ST_RD:  %2d 0x%08x, BRANCH 0x%08x", latched_rd, reg_pc + (latched_compr ? 2 : 4), current_pc);)
 					end
 					latched_store && !latched_branch: begin
-						`debug($display("ST_RD:  %2d 0x%08x", latched_rd, latched_stalu ? alu_out_q : reg_out);)
+//						`debug($display("ST_RD:  %2d 0x%08x", latched_rd, latched_stalu ? alu_out_q : reg_out);)
 					end
 					ENABLE_IRQ && irq_state[0]: begin
 						current_pc = PROGADDR_IRQ;
@@ -1533,7 +1535,7 @@ module picorv32 #(
 						do_waitirq <= 1;
 				end else
 				if (decoder_trigger) begin
-					`debug($display("-- %-0t", $time);)
+//					`debug($display("-- %-0t", $time);)
 					irq_delay <= irq_active;
 					reg_next_pc <= current_pc + (compressed_instr ? 2 : 4);
 					if (ENABLE_TRACE)
@@ -1562,13 +1564,13 @@ module picorv32 #(
 				case (1'b1)
 					(CATCH_ILLINSN || WITH_PCPI) && instr_trap: begin
 						if (WITH_PCPI) begin
-							`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
+//							`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
 							reg_op1 <= cpuregs_rs1;
 							dbg_rs1val <= cpuregs_rs1;
 							dbg_rs1val_valid <= 1;
 							if (ENABLE_REGS_DUALPORT) begin
 								pcpi_valid <= 1;
-								`debug($display("LD_RS2: %2d 0x%08x", decoded_rs2, cpuregs_rs2);)
+//								`debug($display("LD_RS2: %2d 0x%08x", decoded_rs2, cpuregs_rs2);)
 								reg_sh <= cpuregs_rs2;
 								reg_op2 <= cpuregs_rs2;
 								dbg_rs2val <= cpuregs_rs2;
@@ -1582,7 +1584,7 @@ module picorv32 #(
 								end else
 								if (CATCH_ILLINSN && (pcpi_timeout || instr_ecall_ebreak)) begin
 									pcpi_valid <= 0;
-									`debug($display("EBREAK OR UNSUPPORTED INSN AT 0x%08x", reg_pc);)
+//									`debug($display("EBREAK OR UNSUPPORTED INSN AT 0x%08x", reg_pc);)
 									if (ENABLE_IRQ && !irq_mask[irq_ebreak] && !irq_active) begin
 										next_irq_pending[irq_ebreak] = 1;
 										cpu_state <= cpu_state_fetch;
@@ -1593,7 +1595,7 @@ module picorv32 #(
 								cpu_state <= cpu_state_ld_rs2;
 							end
 						end else begin
-							`debug($display("EBREAK OR UNSUPPORTED INSN AT 0x%08x", reg_pc);)
+//							`debug($display("EBREAK OR UNSUPPORTED INSN AT 0x%08x", reg_pc);)
 							if (ENABLE_IRQ && !irq_mask[irq_ebreak] && !irq_active) begin
 								next_irq_pending[irq_ebreak] = 1;
 								cpu_state <= cpu_state_fetch;
@@ -1626,7 +1628,7 @@ module picorv32 #(
 						cpu_state <= cpu_state_exec;
 					end
 					ENABLE_IRQ && ENABLE_IRQ_QREGS && instr_getq: begin
-						`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
+//						`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
 						reg_out <= cpuregs_rs1;
 						dbg_rs1val <= cpuregs_rs1;
 						dbg_rs1val_valid <= 1;
@@ -1634,7 +1636,7 @@ module picorv32 #(
 						cpu_state <= cpu_state_fetch;
 					end
 					ENABLE_IRQ && ENABLE_IRQ_QREGS && instr_setq: begin
-						`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
+//						`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
 						reg_out <= cpuregs_rs1;
 						dbg_rs1val <= cpuregs_rs1;
 						dbg_rs1val_valid <= 1;
@@ -1647,7 +1649,7 @@ module picorv32 #(
 						irq_active <= 0;
 						latched_branch <= 1;
 						latched_store <= 1;
-						`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
+//						`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
 						reg_out <= CATCH_MISALIGN ? (cpuregs_rs1 & 32'h fffffffe) : cpuregs_rs1;
 						dbg_rs1val <= cpuregs_rs1;
 						dbg_rs1val_valid <= 1;
@@ -1656,7 +1658,7 @@ module picorv32 #(
 					ENABLE_IRQ && instr_maskirq: begin
 						latched_store <= 1;
 						reg_out <= irq_mask;
-						`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
+//						`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
 						irq_mask <= cpuregs_rs1 | MASKED_IRQ;
 						dbg_rs1val <= cpuregs_rs1;
 						dbg_rs1val_valid <= 1;
@@ -1665,14 +1667,14 @@ module picorv32 #(
 					ENABLE_IRQ && ENABLE_IRQ_TIMER && instr_timer: begin
 						latched_store <= 1;
 						reg_out <= timer;
-						`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
+//						`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
 						timer <= cpuregs_rs1;
 						dbg_rs1val <= cpuregs_rs1;
 						dbg_rs1val_valid <= 1;
 						cpu_state <= cpu_state_fetch;
 					end
 					is_lb_lh_lw_lbu_lhu && !instr_trap: begin
-						`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
+//						`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
 						reg_op1 <= cpuregs_rs1;
 						dbg_rs1val <= cpuregs_rs1;
 						dbg_rs1val_valid <= 1;
@@ -1680,7 +1682,7 @@ module picorv32 #(
 						mem_do_rinst <= 1;
 					end
 					is_slli_srli_srai && !BARREL_SHIFTER: begin
-						`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
+//						`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
 						reg_op1 <= cpuregs_rs1;
 						dbg_rs1val <= cpuregs_rs1;
 						dbg_rs1val_valid <= 1;
@@ -1688,7 +1690,7 @@ module picorv32 #(
 						cpu_state <= cpu_state_shift;
 					end
 					is_jalr_addi_slti_sltiu_xori_ori_andi, is_slli_srli_srai && BARREL_SHIFTER: begin
-						`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
+//						`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
 						reg_op1 <= cpuregs_rs1;
 						dbg_rs1val <= cpuregs_rs1;
 						dbg_rs1val_valid <= 1;
@@ -1700,12 +1702,12 @@ module picorv32 #(
 						cpu_state <= cpu_state_exec;
 					end
 					default: begin
-						`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
+//						`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
 						reg_op1 <= cpuregs_rs1;
 						dbg_rs1val <= cpuregs_rs1;
 						dbg_rs1val_valid <= 1;
 						if (ENABLE_REGS_DUALPORT) begin
-							`debug($display("LD_RS2: %2d 0x%08x", decoded_rs2, cpuregs_rs2);)
+//							`debug($display("LD_RS2: %2d 0x%08x", decoded_rs2, cpuregs_rs2);)
 							reg_sh <= cpuregs_rs2;
 							reg_op2 <= cpuregs_rs2;
 							dbg_rs2val <= cpuregs_rs2;
@@ -1735,7 +1737,7 @@ module picorv32 #(
 			end
 
 			cpu_state_ld_rs2: begin
-				`debug($display("LD_RS2: %2d 0x%08x", decoded_rs2, cpuregs_rs2);)
+//				`debug($display("LD_RS2: %2d 0x%08x", decoded_rs2, cpuregs_rs2);)
 				reg_sh <= cpuregs_rs2;
 				reg_op2 <= cpuregs_rs2;
 				dbg_rs2val <= cpuregs_rs2;
@@ -1754,7 +1756,7 @@ module picorv32 #(
 						end else
 						if (CATCH_ILLINSN && (pcpi_timeout || instr_ecall_ebreak)) begin
 							pcpi_valid <= 0;
-							`debug($display("EBREAK OR UNSUPPORTED INSN AT 0x%08x", reg_pc);)
+//							`debug($display("EBREAK OR UNSUPPORTED INSN AT 0x%08x", reg_pc);)
 							if (ENABLE_IRQ && !irq_mask[irq_ebreak] && !irq_active) begin
 								next_irq_pending[irq_ebreak] = 1;
 								cpu_state <= cpu_state_fetch;
@@ -1892,14 +1894,14 @@ module picorv32 #(
 
 		if (CATCH_MISALIGN && resetn && (mem_do_rdata || mem_do_wdata)) begin
 			if (mem_wordsize == 0 && reg_op1[1:0] != 0) begin
-				`debug($display("MISALIGNED WORD: 0x%08x", reg_op1);)
+//				`debug($display("MISALIGNED WORD: 0x%08x", reg_op1);)
 				if (ENABLE_IRQ && !irq_mask[irq_buserror] && !irq_active) begin
 					next_irq_pending[irq_buserror] = 1;
 				end else
 					cpu_state <= cpu_state_trap;
 			end
 			if (mem_wordsize == 1 && reg_op1[0] != 0) begin
-				`debug($display("MISALIGNED HALFWORD: 0x%08x", reg_op1);)
+//				`debug($display("MISALIGNED HALFWORD: 0x%08x", reg_op1);)
 				if (ENABLE_IRQ && !irq_mask[irq_buserror] && !irq_active) begin
 					next_irq_pending[irq_buserror] = 1;
 				end else
@@ -1907,7 +1909,7 @@ module picorv32 #(
 			end
 		end
 		if (CATCH_MISALIGN && resetn && mem_do_rinst && (COMPRESSED_ISA ? reg_pc[0] : |reg_pc[1:0])) begin
-			`debug($display("MISALIGNED INSTRUCTION: 0x%08x", reg_pc);)
+//			`debug($display("MISALIGNED INSTRUCTION: 0x%08x", reg_pc);)
 			if (ENABLE_IRQ && !irq_mask[irq_buserror] && !irq_active) begin
 				next_irq_pending[irq_buserror] = 1;
 			end else

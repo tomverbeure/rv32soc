@@ -14,13 +14,19 @@ OBJDUMP         = $(TARGET)-objdump
 
 .PHONY: all clean syntax time stat flash
 
-all: progmem.hex progmem.dis progmem.bin
+all: progmem.hex progmem.dis progmem.bin progmem.coe progmem.mif
 
 progmem.dis: progmem.elf
 	$(OBJDUMP) -s -D $< > $@
 
 progmem.hex: progmem.elf
 	$(OBJCOPY) -O binary $< /dev/stdout |  hexdump -v -e '/4 "%08X\n"' > $@
+
+progmem.coe: progmem.bin
+	../misc/create_mif.rb -c -d 2048 -w 32 $< > $@
+
+progmem.mif: progmem.bin
+	../misc/create_mif.rb -d 2048 -w 32 $< > $@
 
 progmem.bin: progmem.elf
 	$(OBJCOPY) -O binary $< $@
@@ -32,4 +38,4 @@ progmem.elf: progmem.o start.o progmem.lds Makefile
 #	icebram -g 32 2048 > $@
 
 clean:
-	\rm -fr *.o *.hex *.elf *.dis *.bin
+	\rm -fr *.o *.hex *.elf *.dis *.bin *.coe *.map *.mif

@@ -2,27 +2,28 @@
 `timescale 1ns/100ps
 `default_nettype none
 
-module soc(
-    input wire  clk,
-    input wire  reset_,
-
-    output [NR_GPIOS-1:0]   gpio_oe,
-    output [NR_GPIOS-1:0]   gpio_do,
-    input  [NR_GPIOS-1:0]   gpio_di
+module soc
+    #(
+        parameter integer LOCAL_RAM_SIZE_KB = 8,
+        parameter integer NR_GPIOS          = 8
+    ) (
+        input wire  clk,
+        input wire  reset_,
+    
+        output [NR_GPIOS-1:0]   gpio_oe,
+        output [NR_GPIOS-1:0]   gpio_do,
+        input  [NR_GPIOS-1:0]   gpio_di
     );
-
-    parameter integer LOCAL_RAM_SIZE_KB = 8;
-    parameter integer NR_GPIOS          = 8;
 
     parameter [31:0] PROGADDR_RESET     = 32'h 0000_0000;
     parameter [31:0] PROGADDR_IRQ       = 32'h 0000_0010;
     parameter integer BARREL_SHIFTER    = 1;
     parameter integer COMPRESSED_ISA    = 1;
-    parameter integer ENABLE_MUL        = 1;
-    parameter integer ENABLE_FAST_MUL   = 1;
-    parameter integer ENABLE_DIV        = 1;
-    parameter integer ENABLE_IRQ        = 1;
-    parameter integer ENABLE_IRQ_QREGS  = 0;
+    parameter integer enaBLE_MUL        = 1;
+    parameter integer enaBLE_FAST_MUL   = 1;
+    parameter integer enaBLE_DIV        = 1;
+    parameter integer enaBLE_IRQ        = 1;
+    parameter integer enaBLE_IRQ_QREGS  = 0;
 
     wire        mem_cmd_valid;
     wire        mem_cmd_ready;
@@ -36,6 +37,15 @@ module soc(
 
     wire [31:0] irq;
     assign irq = 32'd0;
+
+    reg mem_rsp_ready_local_ram;
+    reg [31:0] mem_rsp_rdata_local_ram;
+
+    wire mem_rsp_ready_gpio;
+    wire [31:0] mem_rsp_rdata_gpio;
+
+    reg mem_rsp_ready_void;
+
 
 `ifdef USE_PICORV32
     picorv32_wrapper
@@ -122,7 +132,6 @@ module soc(
                            mem_cmd_sel_gpio_reg      ? mem_rsp_ready_gpio        :
                                                        mem_rsp_ready_void;
 
-    reg mem_rsp_ready_void;
     always @(posedge clk) begin
         mem_rsp_ready_void  <= mem_cmd_valid & !mem_cmd_wr && mem_cmd_sel_void;
 
@@ -135,8 +144,8 @@ module soc(
     // LOCAL RAM
     //============================================================
   
-    reg mem_rsp_ready_local_ram;
-    reg [31:0] mem_rsp_rdata_local_ram;
+    localparam local_ram_addr_bits = 11;
+    wire [31:0] local_ram_rdata;
 
     reg mem_rsp_ready_local_ram_p1;
 
@@ -157,8 +166,6 @@ module soc(
     assign local_ram_wr = (mem_cmd_valid && mem_cmd_sel_local_ram &&  mem_cmd_wr) ? mem_cmd_be : 4'b0;
     assign local_ram_rd = (mem_cmd_valid && mem_cmd_sel_local_ram && !mem_cmd_wr);
 
-    localparam local_ram_addr_bits = $clog2(LOCAL_RAM_SIZE_KB * 1024);
-    wire [31:0] local_ram_rdata;
 
 	picosoc_mem #(.WORDS(LOCAL_RAM_SIZE_KB * 256)) memory (
 		.clk(clk),
@@ -173,8 +180,6 @@ module soc(
     // GPIO
     //============================================================
 
-    wire mem_rsp_ready_gpio;
-    wire [31:0] mem_rsp_rdata_gpio;
 
     gpio #(.NR_GPIOS(8)) u_gpio(
         .clk        (clk),
@@ -215,13 +220,63 @@ module picosoc_regs (
 	assign rdata2 = regs[raddr2[4:0]];
 endmodule
 
+`ifdef XILINX
 module picosoc_mem #(
 	parameter integer WORDS = 256
 ) (
 	input                           clk,
 	input      [3:0]                wr,
     input                           rd,
-	input      [$clog2(WORDS)-1:0]  addr,
+	input      [11:0]               addr,
+	input      [31:0]               wdata,
+	output     [31:0]               rdata
+);
+
+    rv32_program_ram_2048x8 u_ram0 (
+        .clka       (clk),
+        .ena        (1'b1),
+        .wea        (wr[0]),
+        .addra      (addr),
+        .dina       (wdata[7:0]),
+        .douta      (rdata[7:0])
+    );
+
+    rv32_program_ram_2048x8 u_ram1 (
+        .clka       (clk),
+        .ena        (1'b1),
+        .wea        (wr[1]),
+        .addra      (addr),
+        .dina       (wdata[15:8]),
+        .douta      (rdata[15:8])
+    );
+
+    rv32_program_ram_2048x8 u_ram2 (
+        .clka       (clk),
+        .ena        (1'b1),
+        .wea        (wr[2]),
+        .addra      (addr),
+        .dina       (wdata[23:16]),
+        .douta      (rdata[23:16])
+    );
+
+    rv32_program_ram_2048x8 u_ram3 (
+        .clka       (clk),
+        .ena        (1'b1),
+        .wea        (wr[3]),
+        .addra      (addr),
+        .dina       (wdata[31:24]),
+        .douta      (rdata[31:24])
+    );
+
+endmodule
+`else
+module picosoc_mem #(
+	parameter integer WORDS = 256
+) (
+	input                           clk,
+	input      [3:0]                wr,
+    input                           rd,
+	input      [11:0]               addr,
 	input      [31:0]               wdata,
 	output reg [31:0]               rdata
 );
@@ -240,4 +295,4 @@ module picosoc_mem #(
 	end
 
 endmodule
-
+`endif
