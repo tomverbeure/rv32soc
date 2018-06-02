@@ -220,79 +220,111 @@ module picosoc_regs (
 	assign rdata2 = regs[raddr2[4:0]];
 endmodule
 
-`ifdef XILINX
+//`ifdef XILIN
+//module picosoc_mem #(
+//	parameter integer WORDS = 256
+//) (
+//	input                           clk,
+//	input      [3:0]                wr,
+//    input                           rd,
+//	input      [11:0]               addr,
+//	input      [31:0]               wdata,
+//	output     [31:0]               rdata
+//);
+//
+//    rv32_program_ram_2048x8 u_ram0 (
+//        .clka       (clk),
+//        .ena        (1'b1),
+//        .wea        (wr[0]),
+//        .addra      (addr),
+//        .dina       (wdata[7:0]),
+//        .douta      (rdata[7:0])
+//    );
+//
+//    rv32_program_ram_2048x8 u_ram1 (
+//        .clka       (clk),
+//        .ena        (1'b1),
+//        .wea        (wr[1]),
+//        .addra      (addr),
+//        .dina       (wdata[15:8]),
+//        .douta      (rdata[15:8])
+//    );
+//
+//    rv32_program_ram_2048x8 u_ram2 (
+//        .clka       (clk),
+//        .ena        (1'b1),
+//        .wea        (wr[2]),
+//        .addra      (addr),
+//        .dina       (wdata[23:16]),
+//        .douta      (rdata[23:16])
+//    );
+//
+//    rv32_program_ram_2048x8 u_ram3 (
+//        .clka       (clk),
+//        .ena        (1'b1),
+//        .wea        (wr[3]),
+//        .addra      (addr),
+//        .dina       (wdata[31:24]),
+//        .douta      (rdata[31:24])
+//    );
+//
+//endmodule
+//`elsif MEM32
+//module picosoc_mem #(
+//	parameter integer WORDS = 256
+//) (
+//	input                           clk,
+//	input      [3:0]                wr,
+//    input                           rd,
+//	input      [11:0]               addr,
+//	input      [31:0]               wdata,
+//	output reg [31:0]               rdata
+//);
+//	reg [31:0] mem [0:WORDS-1];
+//
+//    initial begin
+//        $readmemh("progmem.hex", mem);
+//    end
+//
+//	always @(posedge clk) begin
+//        if (rd)    rdata <= mem[addr];
+//		if (wr[0]) mem[addr][ 7: 0] <= wdata[ 7: 0];
+//		if (wr[1]) mem[addr][15: 8] <= wdata[15: 8];
+//		if (wr[2]) mem[addr][23:16] <= wdata[23:16];
+//		if (wr[3]) mem[addr][31:24] <= wdata[31:24];
+//	end
+//
+//endmodule
+//`else
 module picosoc_mem #(
 	parameter integer WORDS = 256
 ) (
 	input                           clk,
 	input      [3:0]                wr,
     input                           rd,
-	input      [11:0]               addr,
-	input      [31:0]               wdata,
-	output     [31:0]               rdata
-);
-
-    rv32_program_ram_2048x8 u_ram0 (
-        .clka       (clk),
-        .ena        (1'b1),
-        .wea        (wr[0]),
-        .addra      (addr),
-        .dina       (wdata[7:0]),
-        .douta      (rdata[7:0])
-    );
-
-    rv32_program_ram_2048x8 u_ram1 (
-        .clka       (clk),
-        .ena        (1'b1),
-        .wea        (wr[1]),
-        .addra      (addr),
-        .dina       (wdata[15:8]),
-        .douta      (rdata[15:8])
-    );
-
-    rv32_program_ram_2048x8 u_ram2 (
-        .clka       (clk),
-        .ena        (1'b1),
-        .wea        (wr[2]),
-        .addra      (addr),
-        .dina       (wdata[23:16]),
-        .douta      (rdata[23:16])
-    );
-
-    rv32_program_ram_2048x8 u_ram3 (
-        .clka       (clk),
-        .ena        (1'b1),
-        .wea        (wr[3]),
-        .addra      (addr),
-        .dina       (wdata[31:24]),
-        .douta      (rdata[31:24])
-    );
-
-endmodule
-`else
-module picosoc_mem #(
-	parameter integer WORDS = 256
-) (
-	input                           clk,
-	input      [3:0]                wr,
-    input                           rd,
-	input      [11:0]               addr,
+	input      [10:0]               addr,
 	input      [31:0]               wdata,
 	output reg [31:0]               rdata
 );
-	reg [31:0] mem [0:WORDS-1];
+	reg [7:0] mem0 [0:WORDS-1];
+	reg [7:0] mem1 [0:WORDS-1];
+	reg [7:0] mem2 [0:WORDS-1];
+	reg [7:0] mem3 [0:WORDS-1];
 
     initial begin
-        $readmemh("progmem.hex", mem);
+        $readmemh("progmem0.hex", mem0);
+        $readmemh("progmem1.hex", mem1);
+        $readmemh("progmem2.hex", mem2);
+        $readmemh("progmem3.hex", mem3);
     end
 
 	always @(posedge clk) begin
-        if (rd)    rdata <= mem[addr];
-		if (wr[0]) mem[addr][ 7: 0] <= wdata[ 7: 0];
-		if (wr[1]) mem[addr][15: 8] <= wdata[15: 8];
-		if (wr[2]) mem[addr][23:16] <= wdata[23:16];
-		if (wr[3]) mem[addr][31:24] <= wdata[31:24];
+        if (rd)    rdata <= { mem3[addr], mem2[addr], mem1[addr], mem0[addr] };
+		if (wr[0]) mem0[addr] <= wdata[ 7: 0];
+		if (wr[1]) mem1[addr] <= wdata[15: 8];
+		if (wr[2]) mem2[addr] <= wdata[23:16];
+		if (wr[3]) mem3[addr] <= wdata[31:24];
 	end
 
 endmodule
-`endif
+//`endif

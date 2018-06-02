@@ -44,7 +44,7 @@ run_xilinx: tb sw
 
 sw:
 	cd ../sw && $(MAKE)
-	cp ../sw/progmem.hex output
+	cp ../sw/progmem*.hex output
 
 waves:
 	gtkwave ./output/waves.vcd 
