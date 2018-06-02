@@ -219,3 +219,6 @@ NET "i2c_scl"   LOC = R10 |IOSTANDARD = LVCMOS33;
 #Created by Constraints Editor (xc3s1600e-fg320-5) - 2018/05/29
 NET "osc_clk" TNM_NET = osc_clk;
 TIMESPEC TS_osc_clk = PERIOD "osc_clk" 10 ns HIGH 50%;
+#Created by Constraints Editor (xc3s1600e-fg320-5) - 2018/06/02
+NET "u_pll/cntr_11" TNM_NET = u_pll/cntr_11;
+TIMESPEC TS_clk = PERIOD "u_pll/cntr_11" TS_osc_clk * 4 HIGH 50%;
