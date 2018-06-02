@@ -319,11 +319,12 @@ module picosoc_mem #(
     end
 
 	always @(posedge clk) begin
-        if (rd)    rdata <= { mem3[addr], mem2[addr], mem1[addr], mem0[addr] };
 		if (wr[0]) mem0[addr] <= wdata[ 7: 0];
 		if (wr[1]) mem1[addr] <= wdata[15: 8];
 		if (wr[2]) mem2[addr] <= wdata[23:16];
 		if (wr[3]) mem3[addr] <= wdata[31:24];
+
+        rdata <= { mem3[addr], mem2[addr], mem1[addr], mem0[addr] };
 	end
 
 endmodule
