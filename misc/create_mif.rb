@@ -10,8 +10,8 @@ OptionParser.new do |opts|
         options[:verbose] = v
     end
 
-    opts.on("-c", "--coe", "Create Xilinx .coe file instead .mif") do |c|
-        options[:coe] = c
+    opts.on("-fFORMAT", "--format=FORMAT", "Specify output format ('mif', 'hex', 'coe')") do |f|
+        options[:format] = f
     end
 
     opts.on("-dDEPTH", "--depth=DEPTH", Integer, "Memory depth") do |d|
@@ -40,21 +40,21 @@ bytes = bin.unpack("C*")[start_offset..-1].each_slice(increment).collect{ |a| a.
 
 depth           = options[:depth]   || bytes.size
 width           = options[:width]   || 8
-coe             = options[:coe]     || false
+format          = options[:format]  || "mif"
 
 bytes_per_word = (width+7)>>3
 nr_addr_bits = Math.log2(depth).ceil
 
 if options[:verbose]
+    STDERR.puts "output format : #{format}"
     STDERR.puts "depth         : #{depth}"
     STDERR.puts "width         : #{width}"
     STDERR.puts "bytes per word: #{bytes_per_word}"
     STDERR.puts "start offset  : #{start_offset}"
     STDERR.puts "incrrement    : #{increment}"
-    STDERR.puts "output format : %s" % [ coe ? "coe" : "mif" ]
 end
 
-if !coe
+if format == "mif"
     puts %{-- Created by create_mif.rb
 DEPTH         = #{depth};
 WIDTH         = #{width};
@@ -82,7 +82,8 @@ BEGIN
     
     puts "END;"
     puts
-else
+
+elsif format == "coe"
     puts %{; Created by create_mif.rb
 ; block memory configuration:
 ; DEPTH         = #{depth};
@@ -101,4 +102,20 @@ memory_initialization_vector=}
     str = words.collect{ |w| data_fmt_string % w }.join(",\n") + ";"
     
     puts str
+
+elsif format == "hex"
+
+    words = bytes.each_slice(bytes_per_word).collect do |w|
+        value = 0
+        w.reverse.collect { |b| value = value * 256 + b }
+        value
+    end
+
+    (depth - words.size).times { words << 0 }
+
+    data_fmt_string = "%%0%dx" % (bytes_per_word * 2)
+    str = words.collect{ |w| data_fmt_string % w }.join("\n")
+
+    puts str
+
 end
