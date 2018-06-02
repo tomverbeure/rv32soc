@@ -18,19 +18,30 @@ OptionParser.new do |opts|
         options[:depth] = d
     end
 
-    opts.on("-wWIDTH", "--width=WIDTH", Integer, "Memory width") do |w|
+    opts.on("-wWIDTH", "--width=WIDTH", Integer, "Memory width (bits)") do |w|
         options[:width] = w
+    end
+
+    opts.on("-oOFFSET", "--offset=OFFSET", Integer, "First byte to use of the binary input file (default = 0)") do |o|
+        options[:offset] = o
+    end
+
+    opts.on("-iINCREMENT", "--increment=INCREMENT", Integer, "How many bytes to the next byte (default = 1)") do |i|
+        options[:increment] = i
     end
 
 end.parse!
 
+start_offset    = options[:offset]    || 0
+increment       = options[:increment] || 1
 
 bin = File.open(ARGV[0], "rb").read
-bytes = bin.unpack("C*")
+bytes = bin.unpack("C*")[start_offset..-1].each_slice(increment).collect{ |a| a.first }
 
-depth = options[:depth] || bytes.size
-width = options[:width] || 8
-coe   = options[:coe]   || false
+depth           = options[:depth]   || bytes.size
+width           = options[:width]   || 8
+coe             = options[:coe]     || false
+
 bytes_per_word = (width+7)>>3
 nr_addr_bits = Math.log2(depth).ceil
 
@@ -38,12 +49,13 @@ if options[:verbose]
     STDERR.puts "depth         : #{depth}"
     STDERR.puts "width         : #{width}"
     STDERR.puts "bytes per word: #{bytes_per_word}"
+    STDERR.puts "start offset  : #{start_offset}"
+    STDERR.puts "incrrement    : #{increment}"
     STDERR.puts "output format : %s" % [ coe ? "coe" : "mif" ]
 end
 
 if !coe
-    puts %{
--- Created by create_mif.rb
+    puts %{-- Created by create_mif.rb
 DEPTH         = #{depth};
 WIDTH         = #{width};
 ADDRESS_RADIX = HEX;
@@ -71,8 +83,7 @@ BEGIN
     puts "END;"
     puts
 else
-    puts %{
-; Created by create_mif.rb
+    puts %{; Created by create_mif.rb
 ; block memory configuration:
 ; DEPTH         = #{depth};
 ; WIDTH         = #{width};
