@@ -10,7 +10,7 @@ OptionParser.new do |opts|
         options[:verbose] = v
     end
 
-    opts.on("-fFORMAT", "--format=FORMAT", "Specify output format ('mif', 'hex', 'coe')") do |f|
+    opts.on("-fFORMAT", "--format=FORMAT", "Specify output format ('mif', 'hex', 'coe', 'mem')") do |f|
         options[:format] = f
     end
 
@@ -51,7 +51,7 @@ if options[:verbose]
     STDERR.puts "width         : #{width}"
     STDERR.puts "bytes per word: #{bytes_per_word}"
     STDERR.puts "start offset  : #{start_offset}"
-    STDERR.puts "incrrement    : #{increment}"
+    STDERR.puts "increment     : #{increment}"
 end
 
 if format == "mif"
@@ -118,4 +118,22 @@ elsif format == "hex"
 
     puts str
 
+elsif format == "mem"
+
+    words = bytes.each_slice(bytes_per_word).collect do |w|
+        value = 0
+        w.reverse.collect { |b| value = value * 256 + b }
+        value
+    end
+
+    (depth - words.size).times { words << 0 }
+
+    data_fmt_string = "%%0%dx" % (bytes_per_word * 2)
+    str = words.collect{ |w| data_fmt_string % w }.join("\n")
+
+    puts "@00000000"
+    puts str
+
+else
+    Kernel.abort("Unknown format '#{format}'! Aborting...")
 end

@@ -1,4 +1,8 @@
 
+INST "u_soc/memory/Mram_mem0" LOC="RAMB16_X0Y0";
+INST "u_soc/memory/Mram_mem1" LOC="RAMB16_X0Y1";
+INST "u_soc/memory/Mram_mem2" LOC="RAMB16_X0Y2";
+INST "u_soc/memory/Mram_mem3" LOC="RAMB16_X0Y3";
 
 # 100MHZ Oscillator
 NET "osc_clk" LOC = U10 |IOSTANDARD = LVCMOS33;
