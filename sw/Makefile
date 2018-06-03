@@ -14,7 +14,7 @@ OBJDUMP         = $(TARGET)-objdump
 
 .PHONY: all clean syntax time stat flash
 
-all: progmem.dis progmem.bin progmem0.coe progmem0.mif progmem0.hex
+all: progmem.dis progmem.bin progmem0.coe progmem0.mif progmem0.hex progmem.mem
 
 progmem.dis: progmem.elf
 	$(OBJDUMP) -s -D $< > $@
@@ -37,6 +37,9 @@ progmem0.mif: progmem.bin
 	../misc/create_mif.rb -f mif -d 2048 -w 8 -o 2 -i 4 $< > progmem2.mif
 	../misc/create_mif.rb -f mif -d 2048 -w 8 -o 3 -i 4 $< > progmem3.mif
 
+progmem.mem: progmem.bin
+	../misc/create_mif.rb -f mem -d 2048 -w 32 $< > progmem.mem
+
 progmem.bin: progmem.elf
 	$(OBJCOPY) -O binary $< $@
 
@@ -44,4 +47,4 @@ progmem.elf: progmem.o start.o progmem.lds Makefile
 	$(LD) $(LDFLAGS) -o $@ start.o progmem.o > progmem.map
 
 clean:
-	\rm -fr *.o *.hex *.elf *.dis *.bin *.coe *.map *.mif
+	\rm -fr *.o *.hex *.elf *.dis *.bin *.coe *.map *.mif *.mem
