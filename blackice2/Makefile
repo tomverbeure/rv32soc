@@ -1,7 +1,7 @@
 
 
 RTL = ../rtl
-VERILOG_CORE    = $(RTL)/top.v $(RTL)/soc.v $(RTL)/gpio.v $(RTL)/reset_gen.v \
+VERILOG_CORE    = $(RTL)/top.v $(RTL)/soc.v $(RTL)/gpio.v $(RTL)/reset_gen.v $(RTL)/local_ram.v \
 					$(RTL)/picorv32.v $(RTL)/picorv32_wrapper.v \
 					../vexriscv/VexRiscv_FullNoMmuNoCacheNoCsrNoDbg.v $(RTL)/vexriscv_wrapper.v
 VERILOG_LATTICE = $(RTL)/pads_lattice.v $(RTL)/pll_lattice.v 
@@ -14,19 +14,31 @@ chip.bin: chip.asc
 	icepack $< $@
 
 chip.asc: chip_pnr.asc 
-	icebram progmem.hex ../sw/progmem.hex < $< > $@
+	icebram progmem0.hex ../sw/progmem0.hex < chip_pnr.asc > $@
+	icebram progmem1.hex ../sw/progmem1.hex < chip_pnr.asc > $@
+	icebram progmem2.hex ../sw/progmem2.hex < chip_pnr.asc > $@
+	icebram progmem3.hex ../sw/progmem3.hex < chip_pnr.asc > $@
 
 chip_pnr.asc: chip.blif
 	arachne-pnr -r -d 8k -P tq144:4k -p $(PCF_FILE) chip.blif -o chip_pnr.asc
 
-chip.blif: rv32soc.ys rv32soc_all.v progmem.hex $(VERILOG_FILES) 
+chip.blif: rv32soc.ys rv32soc_all.v $(VERILOG_FILES) 
 	yosys -q -l chip.yosys.log $<
 
 rv32soc_all.v: $(VERILOG_FILES) 
 	echo $^ | perl -pe 's|(.*?)\s|`include "$$1"\n|g' > $@
 
-progmem.hex: 
-	icebram -g 32 2048 > $@
+progmem0.hex: 
+	icebram -g 8 2048 > $@
+
+progmem1.hex: 
+	icebram -g 8 2048 > $@
+
+progmem2.hex: 
+	icebram -g 8 2048 > $@
+
+progmem3.hex: 
+	icebram -g 8 2048 > $@
 
 #pll_ice40.v:
 #	icepll -i 100 -o 20 -m -n pll_ice40 -f pll_ice40.v
