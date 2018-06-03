@@ -15,16 +15,6 @@ module soc
         input  [NR_GPIOS-1:0]   gpio_di
     );
 
-    parameter [31:0] PROGADDR_RESET     = 32'h 0000_0000;
-    parameter [31:0] PROGADDR_IRQ       = 32'h 0000_0010;
-    parameter integer BARREL_SHIFTER    = 1;
-    parameter integer COMPRESSED_ISA    = 1;
-    parameter integer ENABLE_MUL        = 1;
-    parameter integer ENABLE_FAST_MUL   = 1;
-    parameter integer ENABLE_DIV        = 1;
-    parameter integer ENABLE_IRQ        = 1;
-    parameter integer ENABLE_IRQ_QREGS  = 0;
-
     wire        mem_cmd_valid;
     wire        mem_cmd_ready;
     wire        mem_cmd_instr;

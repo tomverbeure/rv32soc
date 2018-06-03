@@ -13,7 +13,7 @@ TB = ../tb
 ICICLE_RTL =  ../../icicle
 
 
-VERILOG_CORE    = $(RTL)/top.v $(RTL)/soc.v $(RTL)/gpio.v $(RTL)/reset_gen.v \
+VERILOG_CORE    = $(RTL)/top.v $(RTL)/soc.v $(RTL)/gpio.v $(RTL)/reset_gen.v $(RTL)/local_ram.v \
 			$(RTL)/icicle_wrapper.v \
 			$(RTL)/picorv32_wrapper.v $(RTL)/picorv32.v \
 			$(RTL)/vexriscv_wrapper.v ../vexriscv/VexRiscv_FullNoMmuNoCacheNoCsrNoDbg.v
