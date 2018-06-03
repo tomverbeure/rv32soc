@@ -2,7 +2,7 @@
 XILINX_DIR = /opt/Xilinx/14.7/ISE_DS/
 XILINX_BIN = $(XILINX_DIR)/ISE/bin/lin64
 
-ise:
+ise: progmem.hex
 	$(XILINX_BIN)/ise
 
 impact:
@@ -20,4 +20,10 @@ dump:
 .PHONY: progmem.mem
 progmem.mem: 
 	cd ../sw/ && make
-	../misc/create_mif.rb -f mem -v -d 2048 -w 32 ../sw/progmem.bin > progmem.mem
+	cp ../sw/progmem.mem .
+
+.PHONY: progmem.hex
+progmem.hex:
+	cd ../sw/ && make
+	cp ../sw/progmem*.hex .
+
