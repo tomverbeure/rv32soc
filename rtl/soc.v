@@ -103,7 +103,7 @@ module soc
     reg mem_cmd_sel_local_ram_reg, mem_cmd_sel_gpio_reg, mem_cmd_sel_void_reg;
 
     assign mem_cmd_sel_local_ram = mem_cmd_addr < (LOCAL_RAM_SIZE_KB * 1024);
-    assign mem_cmd_sel_gpio      = mem_cmd_addr[31:12] == 20'hf0000;
+    assign mem_cmd_sel_gpio      = mem_cmd_addr[31:16] == 20'hf000;
     assign mem_cmd_sel_void     = !mem_cmd_sel_local_ram && !mem_cmd_sel_gpio; 
 
     always @(posedge clk) begin
@@ -144,7 +144,7 @@ module soc
     // LOCAL RAM
     //============================================================
   
-    localparam local_ram_addr_bits = 11;
+    localparam local_ram_addr_bits = 13;
     wire [31:0] local_ram_rdata;
 
     reg mem_rsp_ready_local_ram_p1;
@@ -167,7 +167,7 @@ module soc
     assign local_ram_rd = (mem_cmd_valid && mem_cmd_sel_local_ram && !mem_cmd_wr);
 
 
-	local_ram #(.WORDS(LOCAL_RAM_SIZE_KB * 256)) memory (
+	local_ram #(.WORDS(LOCAL_RAM_SIZE_KB * 1024/4)) memory (
 		.clk(clk),
 		.wr(local_ram_wr),
 		.rd(local_ram_rd),
