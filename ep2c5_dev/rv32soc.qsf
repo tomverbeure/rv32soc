@@ -76,6 +76,7 @@ set_global_assignment -name VERILOG_FILE ../rtl/top.v
 set_global_assignment -name VERILOG_FILE ../rtl/soc.v
 set_global_assignment -name VERILOG_FILE ../rtl/reset_gen.v
 set_global_assignment -name VERILOG_FILE ../rtl/pll_generic.v
+set_global_assignment -name VERILOG_FILE ../rtl/local_ram.v
 set_global_assignment -name VERILOG_FILE ../rtl/picorv32.v
 set_global_assignment -name VERILOG_FILE ../rtl/pads_generic.v
 set_global_assignment -name VERILOG_FILE ../rtl/gpio.v

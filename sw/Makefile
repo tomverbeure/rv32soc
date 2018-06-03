@@ -14,13 +14,12 @@ OBJDUMP         = $(TARGET)-objdump
 
 .PHONY: all clean syntax time stat flash
 
-all: progmem.hex progmem.dis progmem.bin progmem0.coe progmem.mif
+all: progmem.dis progmem.bin progmem0.coe progmem0.mif progmem0.hex
 
 progmem.dis: progmem.elf
 	$(OBJDUMP) -s -D $< > $@
 
-progmem.hex: progmem.bin
-	../misc/create_mif.rb -f hex -d 2048 -w 32 $< > $@
+progmem0.hex: progmem.bin
 	../misc/create_mif.rb -f hex -d 2048 -w 8 -o 0 -i 4 $< > progmem0.hex
 	../misc/create_mif.rb -f hex -d 2048 -w 8 -o 1 -i 4 $< > progmem1.hex
 	../misc/create_mif.rb -f hex -d 2048 -w 8 -o 2 -i 4 $< > progmem2.hex
@@ -32,17 +31,17 @@ progmem0.coe: progmem.bin
 	../misc/create_mif.rb -f coe -d 2048 -w 8 -o 2 -i 4 $< > progmem2.coe
 	../misc/create_mif.rb -f coe -d 2048 -w 8 -o 3 -i 4 $< > progmem3.coe
 
-progmem.mif: progmem.bin
-	../misc/create_mif.rb -f mif -d 2048 -w 32 $< > $@
+progmem0.mif: progmem.bin
+	../misc/create_mif.rb -f mif -d 2048 -w 8 -o 0 -i 4 $< > progmem0.mif
+	../misc/create_mif.rb -f mif -d 2048 -w 8 -o 1 -i 4 $< > progmem1.mif
+	../misc/create_mif.rb -f mif -d 2048 -w 8 -o 2 -i 4 $< > progmem2.mif
+	../misc/create_mif.rb -f mif -d 2048 -w 8 -o 3 -i 4 $< > progmem3.mif
 
 progmem.bin: progmem.elf
 	$(OBJCOPY) -O binary $< $@
 
 progmem.elf: progmem.o start.o progmem.lds Makefile
 	$(LD) $(LDFLAGS) -o $@ start.o progmem.o > progmem.map
-
-#./output/progmem_syn.hex:
-#	icebram -g 32 2048 > $@
 
 clean:
 	\rm -fr *.o *.hex *.elf *.dis *.bin *.coe *.map *.mif
